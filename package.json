@@ -1,0 +1,30 @@
+{
+  "name": "caddaie",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CADDAIE — an AI-assisted golf caddie. Deterministic shot math, AI-explained strategy.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit -p . && vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "typecheck": "tsc --noEmit -p . && tsc --noEmit -p worker",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "icons": "node scripts/build-icons.mjs",
+    "check": "npm run typecheck && npm test && npm run build && npm run test:e2e"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@preact/preset-vite": "^2.10.6",
+    "@types/node": "^26.6.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.1"
+  },
+  "dependencies": {
+    "preact": "^10.29.8"
+  }
+}
