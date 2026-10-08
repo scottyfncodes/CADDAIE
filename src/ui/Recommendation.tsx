@@ -1,10 +1,10 @@
 /** The answer. Everything else on the Caddie screen exists to feed this card. */
-import { localTake } from '../ai/localVoice';
 import { aimText, displayMath, fmtDistance, swingText } from '../core/format';
 import type { ClubDistanceStat } from '../core/shots';
 import type { TargetAdvice } from '../core/strategy';
 import type { CaddieResult, Recommendation as Rec } from '../core/types';
 import { distanceLabel, type Units } from '../core/units';
+import { localTake } from '../core/voice';
 
 const CONFIDENCE_TEXT = { high: 'Confident', medium: 'Good call', low: 'Tough one' } as const;
 

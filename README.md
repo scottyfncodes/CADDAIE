@@ -54,22 +54,19 @@ CADDAIE never invents precision. Where a phone can't measure something, it says 
 | Weather, terrain height | Open-Meteo (free, keyless) |
 | Position, heading, camera | Geolocation, DeviceOrientation (with the iOS permission prompt), getUserMedia, MediaRecorder |
 
-An optional explanation service (`worker/`, a Cloudflare Worker that calls a paid model API) still exists for anyone
-who wants to run it. It's off unless configured, can only explain a locked decision, and nothing in the app depends
-on it.
+There is no AI model, paid API or server behind the caddie. Every recommendation, and the sentence that explains it,
+is computed on the phone from the deterministic engine and your own data.
 
 ## Project layout
 
 ```
 src/
-  core/        Pure, deterministic logic (no I/O): recommend, adjustments, clubs, units, format,
+  core/        Pure, deterministic logic (no I/O): recommend, adjustments, clubs, units, format, voice,
                round, stats, handicap, shots, strategy, geo, rangefinder, swing
   state/       Profile, rounds/courses/shots (sanitised localStorage), swings (IndexedDB), backup
   services/    Weather, sensors (GPS, compass, terrain), camera, OpenStreetMap, pose (MediaPipe)
-  ai/          Optional explanation contract and client (shared contract with worker/)
   ui/          Preact screens: App shell, Round, Caddie, Rangefinder, Stats, Swing, Handicap, Settings
 public/models/ MediaPipe pose model
-worker/        Optional explanation proxy (Cloudflare Worker)
 tests/unit     Vitest: engine, handicap, stats, rounds, strategy, geometry, rangefinder, swing, state, services
 tests/e2e      Playwright: every tab on iPhone and desktop viewports, offline, mocked GPS/maps/weather
 ```

@@ -18,9 +18,6 @@ export interface Profile {
   handedness: Handedness;
   tendency: DistanceTendency;
   baseline: { altitudeFt: number; temperatureF: number };
-  /** Optional override of the AI endpoint (the build-time default is used when empty). */
-  aiEndpoint: string;
-  aiEnabled: boolean;
   theme: 'auto' | 'light' | 'dark';
   /** Let the caddie use the golfer's tracked averages instead of the entered carry, once there's enough data. */
   learnFromShots: boolean;
@@ -41,8 +38,6 @@ export const defaultProfile = (): Profile => ({
   handedness: 'right',
   tendency: 'neutral',
   baseline: { altitudeFt: 0, temperatureF: 70 },
-  aiEndpoint: '',
-  aiEnabled: true,
   theme: 'auto',
   learnFromShots: true,
   officialIndex: null,
@@ -118,8 +113,6 @@ export function sanitizeProfile(raw: unknown): Profile {
       altitudeFt: num(baseline.altitudeFt, d.baseline.altitudeFt, -1500, 14000),
       temperatureF: num(baseline.temperatureF, d.baseline.temperatureF, -10, 125),
     },
-    aiEndpoint: str(raw.aiEndpoint, '', 300),
-    aiEnabled: raw.aiEnabled !== false,
     theme: oneOf(raw.theme, ['auto', 'light', 'dark'] as const, d.theme),
     learnFromShots: raw.learnFromShots !== false,
     officialIndex: maybeNum(raw.officialIndex, -10, 54),

@@ -3,7 +3,6 @@
  * the deterministic engine, the golfer's own club data, the pin and the trouble.
  */
 import { useMemo, useState } from 'preact/hooks';
-import { normalizeEndpoint } from '../ai/client';
 import { fmtDistance } from '../core/format';
 import { LIMITS, recommend } from '../core/recommend';
 import { holeNumber, holeYardage, roundPars, type Round } from '../core/round';
@@ -31,7 +30,6 @@ import {
   type LiveConditions,
 } from '../services/conditions';
 import { defaultSituation } from '../state/profile';
-import { AiPanel } from './AiPanel';
 import { playingIndex, useApp } from './context';
 import { Field, NumberField, Segmented, Stepper } from './controls';
 import { Icon } from './kit';
@@ -59,8 +57,6 @@ const STANCES: { value: Stance; label: string }[] = [
   { value: 'ball-below', label: 'Ball below feet' },
 ];
 
-const BUILD_ENDPOINT = normalizeEndpoint(import.meta.env.VITE_CADDAIE_API_URL);
-
 type Live =
   | { phase: 'idle' }
   | { phase: 'loading' }
@@ -70,7 +66,6 @@ type Live =
 export function CaddieTab() {
   const app = useApp();
   const { profile, units: u, shot, setShot, clubs, pin, setPin, range, setRange, active, clubStats, learned } = app;
-  const [note, setNote] = useState('');
   const [live, setLive] = useState<Live>({ phase: 'idle' });
 
   const ctx: PlayerContext = useMemo(
@@ -81,7 +76,6 @@ export function CaddieTab() {
   const update = (patch: Partial<typeof shot>) => setShot((s) => ({ ...s, ...patch }));
   const hcp = playingIndex(app);
   const advice = result.status === 'ok' ? targetAdvice({ pin, trouble: shot.trouble, handicap: hcp, clubCarry: result.club.carry }) : null;
-  const endpoint = profile.aiEnabled ? normalizeEndpoint(profile.aiEndpoint) ?? BUILD_ENDPOINT : null;
 
   const focusField = (f: string) => {
     if (f === 'settings' || f === 'clubs') return app.openSettings();
@@ -92,7 +86,6 @@ export function CaddieTab() {
 
   const newShot = () => {
     setShot((s) => ({ ...defaultSituation(), wind: s.wind, temperatureF: s.temperatureF, altitudeFt: s.altitudeFt }));
-    setNote('');
     setPin(null);
     setRange(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -347,7 +340,6 @@ export function CaddieTab() {
       </details>
 
       {result.status === 'ok' && <WhyPanel rec={result} units={u} learned={learned.has(result.club.id)} />}
-      {result.status === 'ok' && endpoint && <AiPanel rec={result} bag={clubs} units={u} endpoint={endpoint} note={note} onNote={setNote} />}
 
       <button type="button" class="btn ghost wide" onClick={newShot} data-testid="new-shot">
         New shot

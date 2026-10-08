@@ -1,7 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const API = 'https://caddaie-api.test';
-
 /** Seed the profile once per test (so reloads keep what the app saved). Skips the welcome screen. */
 async function seed(page: Page, patch: Record<string, unknown> = {}, extra: Record<string, unknown> = {}) {
   await page.addInitScript(
@@ -426,57 +424,6 @@ test.describe('swing', () => {
     await page.getByTestId('analyze-swing').click();
     // A person standing still: the model finds the golfer, but there's no swing to measure.
     await expect(page.getByTestId('swing-error')).toContainText('full swing', { timeout: 100_000 });
-  });
-});
-
-test.describe('optional explanation service', () => {
-  test('hidden unless configured; the caddie works without it', async ({ page }) => {
-    await seed(page);
-    await page.goto('./#caddie');
-    await distance(page).fill('150');
-    await expect(page.getByTestId('club')).toBeVisible();
-    await expect(page.getByTestId('ask-ai')).toHaveCount(0);
-  });
-
-  test('a validated explanation never changes the numbers', async ({ page }) => {
-    await seed(page, { aiEndpoint: API });
-    let calls = 0;
-    await page.route(`${API}/v1/take`, async (route) => {
-      calls++;
-      const brief = route.request().postDataJSON();
-      expect(JSON.stringify(route.request().headers())).not.toMatch(/x-api-key|authorization/i);
-      await route.fulfill({ json: { take: `${brief.decision.club}, ${brief.decision.swing.toLowerCase()}. Commit to it.`, concern: null } });
-    });
-    await page.goto('./#caddie');
-    await distance(page).fill('152');
-    await page.getByTestId('ask-ai').click();
-    await expect(page.getByTestId('ai-output')).toContainText('7 Iron, full swing. Commit to it.');
-    await expect(page.getByTestId('club')).toHaveText('7 Iron');
-    await distance(page).fill('140');
-    await expect(page.getByTestId('ai-output')).not.toContainText('Commit to it.');
-    await distance(page).fill('152');
-    await expect(page.getByTestId('ai-output')).toContainText('7 Iron, full swing. Commit to it.');
-    expect(calls).toBe(1);
-  });
-
-  test('an explanation that contradicts the math is discarded', async ({ page }) => {
-    await seed(page, { aiEndpoint: API });
-    await page.route(`${API}/v1/take`, (route) => route.fulfill({ json: { take: 'Hit the 5 iron, it plays 175 yards.', concern: null } }));
-    await page.goto('./#caddie');
-    await distance(page).fill('152');
-    await page.getByTestId('ask-ai').click();
-    await expect(page.getByTestId('ai-output')).toContainText('disagreed with the math');
-    await expect(page.getByTestId('club')).toHaveText('7 Iron');
-  });
-
-  test('service failure is explained in plain language and does not hang', async ({ page }) => {
-    await seed(page, { aiEndpoint: API });
-    await page.route(`${API}/v1/take`, (route) => route.abort('connectionrefused'));
-    await page.goto('./#caddie');
-    await distance(page).fill('152');
-    await page.getByTestId('ask-ai').click();
-    await expect(page.getByTestId('ai-output')).toContainText('unavailable');
-    await expect(page.getByTestId('ask-ai')).toBeEnabled();
   });
 });
 

@@ -1,6 +1,5 @@
 /** Your bag, preferences, and where your data lives. Saved on every change. */
 import { useEffect, useState } from 'preact/hooks';
-import { normalizeEndpoint } from '../ai/client';
 import { findGapIssues } from '../core/clubs';
 import { MIN_SHOTS_TO_LEARN, learnableClub, type ShotRecord } from '../core/shots';
 import type { Club } from '../core/types';
@@ -14,8 +13,6 @@ import { useApp } from './context';
 import { Badge, Sheet } from './kit';
 import { Wordmark } from './Wordmark';
 
-const BUILD_ENDPOINT = normalizeEndpoint(import.meta.env.VITE_CADDAIE_API_URL);
-
 export function Settings({ onClose }: { onClose: () => void }) {
   const { profile, setProfile, golf, updateGolf, storageOk, clubStats, units: u } = useApp();
   const [confirmReset, setConfirmReset] = useState(false);
@@ -25,8 +22,6 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const set = (patch: Partial<typeof profile>) => setProfile((p) => ({ ...p, ...patch }));
   const setClub = (id: string, patch: Partial<Club>) => setProfile((p) => ({ ...p, clubs: p.clubs.map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
   const gaps = findGapIssues(profile.clubs.filter((c) => c.carry > 0));
-  const endpointOverride = profile.aiEndpoint.trim();
-  const endpointInvalid = endpointOverride !== '' && !normalizeEndpoint(endpointOverride);
   const unit = distanceLabel(u.distance);
 
   useEffect(() => {
@@ -247,35 +242,6 @@ export function Settings({ onClose }: { onClose: () => void }) {
           </p>
         )}
       </section>
-
-      <details class="card">
-        <summary>
-          <span class="card-title">Advanced</span>
-        </summary>
-        <p class="muted">
-          CADDAIE works fully on its own. If you run your own explanation service (see the project README), it can add a written explanation under each recommendation. It can never change the club or the numbers.
-        </p>
-        <label class="switch">
-          <input type="checkbox" checked={profile.aiEnabled} onChange={(e) => set({ aiEnabled: (e.currentTarget as HTMLInputElement).checked })} />
-          <span>Use an explanation service when one is configured</span>
-        </label>
-        <label class="sub" for="ai-endpoint">
-          Service address {BUILD_ENDPOINT ? '(optional override)' : ''}
-        </label>
-        <input
-          id="ai-endpoint"
-          class="text-input"
-          type="url"
-          inputMode="url"
-          autoComplete="off"
-          spellcheck={false}
-          placeholder={BUILD_ENDPOINT ?? 'https://…'}
-          value={profile.aiEndpoint}
-          aria-invalid={endpointInvalid || undefined}
-          onInput={(e) => set({ aiEndpoint: (e.currentTarget as HTMLInputElement).value })}
-        />
-        {endpointInvalid && <p class="error-text">That doesn’t look like a web address.</p>}
-      </details>
 
       <section class="card">
         <h3 class="card-title">Start over</h3>

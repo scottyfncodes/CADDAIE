@@ -1993,24 +1993,6 @@ select.text-input,
   font-size: 15px;
 }
 
-.note-label {
-  font-size: 15px;
-}
-
-.ai-take {
-  margin: 0;
-  padding: 12px 14px;
-  border-left: 3px solid var(--accent);
-  background: var(--raised-2);
-  border-radius: 0 12px 12px 0;
-}
-
-.ai-concern,
-.ai-fail {
-  font-size: 15px;
-  color: var(--text-2);
-}
-
 /* ---------- Stats & handicap ---------- */
 
 .verdicts {

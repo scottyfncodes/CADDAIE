@@ -28,7 +28,7 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  // Weather and AI calls go straight to the network; they are never cached.
+  // Weather and map calls go straight to the network; they are never cached.
   if (url.origin !== self.location.origin) return;
 
   if (req.mode === 'navigate') {

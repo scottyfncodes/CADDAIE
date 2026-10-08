@@ -17,13 +17,12 @@
  │  services/  GPS + compass + camera (device) · MediaPipe pose (local WASM + model)             │
  │             Open-Meteo weather/terrain · OpenStreetMap Overpass (cached per area)              │
  └───────────────────────────────────────────────────────────────────────────────────────────────┘
-                     optional, off unless configured ─► worker/ (explanation proxy)
 ```
 
 ## Principles
 
-1. **Deterministic numbers.** Every number on screen comes from `src/core`. The optional explanation layer receives
-   a locked brief and is checked by `checkTake` on both sides; it can never change a club or a yardage.
+1. **Deterministic numbers.** Every number and every caddie sentence on screen comes from `src/core` (the sentence
+   from `core/voice.ts` and `core/strategy.ts`). There is no AI model or paid API anywhere in the app.
 2. **Local first.** Scoring, the caddie, stats and the handicap estimate need no network. Rounds are saved on every
    tap. Network features (maps, weather, terrain) are optional, time-limited and cached.
 3. **Honest limits.** Each capability states its source and accuracy: GPS ± on yardages, "approximate" on flag
@@ -82,5 +81,5 @@ rounds. Backup files contain everything except videos.
 
 The manifest has any and maskable icons; standalone display; safe-area insets. `sw.js` is generated at build with
 the exact hashed asset list: pages network-first with a cached-shell fallback, assets cache-first, and the swing
-runtime and model cached on first use in a cache that survives app updates. Weather, map and AI requests are never
+runtime and model cached on first use in a cache that survives app updates. Weather and map requests are never
 cached by the service worker (maps are cached by the app in localStorage).
