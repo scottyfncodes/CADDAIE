@@ -1,14 +1,14 @@
 {
-  "name": "CADDAIE — AI golf caddie",
+  "name": "CADDAIE — your golf caddie",
   "short_name": "CADDAIE",
-  "description": "Tell it the shot, get the club, the number and the reason.",
+  "description": "Keep score, get the club, measure the distance, check your swing and track your handicap.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0a1510",
-  "theme_color": "#0a1510",
+  "background_color": "#0b100d",
+  "theme_color": "#0b100d",
   "categories": ["sports", "utilities"],
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },

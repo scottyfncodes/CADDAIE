@@ -1,4 +1,4 @@
-/** The CADDAIE wordmark: one word, with the AI carried in the accent. */
+/** The CADDAIE wordmark. */
 export function Wordmark({ size = 'md' }: { size?: 'md' | 'lg' }) {
   return (
     <span class={`wordmark wordmark-${size}`} aria-label="CADDAIE" role="img">

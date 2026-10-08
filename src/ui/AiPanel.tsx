@@ -1,5 +1,6 @@
 /**
- * Optional AI explanation. The deterministic answer is already on screen; this
+ * Optional AI explanation, shown only when an explanation service has been
+ * deliberately configured. CADDAIE is complete without it. The deterministic answer is already on screen; this
  * only ever adds words. One request per unique situation, cached, with a hard
  * timeout, and a plain-language message for every failure.
  */
@@ -15,7 +16,7 @@ interface Props {
   rec: Recommendation;
   bag: Club[];
   units: Units;
-  endpoint: string | null;
+  endpoint: string;
   note: string;
   onNote: (s: string) => void;
 }
@@ -33,17 +34,6 @@ export function AiPanel({ rec, bag, units, endpoint, note, onNote }: Props) {
     setState(cached ? { phase: 'done', key, result: cached } : { phase: 'idle' });
     return () => inflight.current?.abort();
   }, [key]);
-
-  if (!endpoint) {
-    return (
-      <section class="card ai" aria-labelledby="ai-title">
-        <h2 id="ai-title" class="card-title">
-          Caddie's <span class="ai-ink">AI</span> read
-        </h2>
-        <p class="muted">The AI caddie isn't connected in this build. Every number above is calculated on your phone and works without it.</p>
-      </section>
-    );
-  }
 
   const ask = async () => {
     inflight.current?.abort();
@@ -64,7 +54,7 @@ export function AiPanel({ rec, bag, units, endpoint, note, onNote }: Props) {
   return (
     <section class="card ai" aria-labelledby="ai-title" aria-busy={loading}>
       <h2 id="ai-title" class="card-title">
-        Caddie's <span class="ai-ink">AI</span> read
+        Explanation
       </h2>
       <label class="note-label" for="golfer-note">
         Anything the numbers can't see? <span class="muted">(optional)</span>
@@ -86,9 +76,7 @@ export function AiPanel({ rec, bag, units, endpoint, note, onNote }: Props) {
         ) : result ? (
           'Ask again'
         ) : (
-          <>
-            Ask CADD<span class="ai-ink-dark">AI</span>E
-          </>
+          'Explain this shot'
         )}
       </button>
       <div aria-live="polite" data-testid="ai-output">

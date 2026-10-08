@@ -1,90 +1,86 @@
 # CADDAIE architecture
 
 ```
- ┌──────────────── Browser (GitHub Pages, installable PWA) ─────────────────┐
- │                                                                           │
- │  UI (Preact) ──► core/recommend()  ── pure, deterministic, offline ──┐    │
- │     ▲                 │                                              │    │
- │     │                 ▼                                              │    │
- │     │           Recommendation ──► ai/brief (locked decision)        │    │
- │     │                 │                    │                         │    │
- │     │          ai/localVoice          ai/client ──── HTTPS ───┐      │    │
- │     │          (always shown)         checkTake() again       │      │    │
- │     │                                                         │      │    │
- │  services/conditions ── GPS + Open-Meteo (keyless) ────────┐  │      │    │
- │  state/profile ── localStorage (sanitised) ────────────────┘  │      │    │
- └───────────────────────────────────────────────────────────────┼──────┘    │
-                                                                 ▼
-                             ┌──────── worker/ (Cloudflare) ────────────────┐
-                             │ CORS allow-list · validate brief · rate limit │
-                             │ ANTHROPIC_API_KEY (secret) → Claude          │
-                             │ checkTake() → {take, concern} or error code   │
-                             └───────────────────────────────────────────────┘
+ ┌────────────────────────── Browser (installable PWA, works offline) ──────────────────────────┐
+ │                                                                                               │
+ │  ui/ (Preact)  Round · Caddie · Rangefinder · Stats · Swing · Handicap · Settings             │
+ │      │                                                                                        │
+ │      ▼                                                                                        │
+ │  core/ (pure, tested)                                                                         │
+ │    recommend + adjustments ─► club, swing, plays-like, aim        strategy ─► aim, safe miss, │
+ │    shots ─► per-club averages, reliability, learned carries                  hole plan         │
+ │    round + stats ─► totals, hole feedback, insights, summary      geo + rangefinder ─► yards  │
+ │    handicap ─► differentials, estimate, trend, course handicap    swing ─► metrics, focus     │
+ │      ▲                                                                                        │
+ │  state/  localStorage: profile, rounds, courses, shots (sanitised on read)                    │
+ │          IndexedDB: swing videos + analyses        backup: JSON export/restore                 │
+ │  services/  GPS + compass + camera (device) · MediaPipe pose (local WASM + model)             │
+ │             Open-Meteo weather/terrain · OpenStreetMap Overpass (cached per area)              │
+ └───────────────────────────────────────────────────────────────────────────────────────────────┘
+                     optional, off unless configured ─► worker/ (explanation proxy)
 ```
 
-## The deterministic layer (`src/core`)
+## Principles
 
-All arithmetic is here, and none of it is left to the AI. Units are imperial internally (yards, feet, mph, °F) and
-convert at the UI edge.
+1. **Deterministic numbers.** Every number on screen comes from `src/core`. The optional explanation layer receives
+   a locked brief and is checked by `checkTake` on both sides; it can never change a club or a yardage.
+2. **Local first.** Scoring, the caddie, stats and the handicap estimate need no network. Rounds are saved on every
+   tap. Network features (maps, weather, terrain) are optional, time-limited and cached.
+3. **Honest limits.** Each capability states its source and accuracy: GPS ± on yardages, "approximate" on flag
+   sizing and terrain height, "not measured from this angle" on swing checks, "CADDAIE estimate, not official" on
+   the handicap, "approximate benchmarks" on stats ratings.
 
-| Factor | Rule | Where |
-| --- | --- | --- |
-| Headwind | +1% of distance per mph of head component | `RULES.headwindPctPerMph` |
-| Tailwind | −0.5% per mph, capped at −10% | `tailwindPctPerMph`, `tailwindMaxPct` |
-| Crosswind | 0.75 yd drift per mph per 150 yd; aim into it | `crossDriftYdsPerMphPer150` |
-| Uphill / downhill | +1 yd per 3 ft up; −0.8 yd per 3 ft down | `uphillYdsPerFt`, `downhillYdsPerFt` |
-| Temperature | ±1% per 10°F from the golfer's baseline | `tempPctPerF` |
-| Altitude | ~2% farther per 1,000 ft above the golfer's **home** altitude | `altitudePctPer1000Ft` |
-| Lie | rough +5%, deep rough +12%, fairway bunker +5%; first cut flags a flyer | `liePct` |
-| Stance | uphill +5%, downhill −5%, ball below feet +3%; sidehill changes aim | `stancePct`, `stanceAimYards` |
-| Tendency | "usually short" +3%, "usually long" −3% | `tendencyPct` |
+## The learning loop
 
-**Club selection** (`selectClub`):
+`ShotRecord`s (GPS-measured during a round, or entered by hand) → `clubStats` (trimmed averages, spread,
+reliability) → `effectiveClubs` (irons, hybrids and wedges with 5+ full shots use the golfer's recent average) →
+`recommend`. GPS shots measure start-to-finish, so woods and driver keep the typed carry; driver averages feed the
+hole plan's tee-shot length instead.
 
-- Within 3 yards under a carry: that club, full swing.
-- 1–2 yards past a carry: the shorter club, full swing.
-- Between clubs: more club, hit smooth or choked down, as long as the take-off stays within what that club type allows.
-- A real hole in the bag: whichever club is closer (a hard swing or a big choke-down).
-- Strategy bias: with trouble short, always get there. With trouble long, stay below the hole.
-- Into the wind at 10 mph or more: club up and knock it down ("when it's breezy, swing easy").
-- Beyond the longest club: that club plus what it leaves. Inside the shortest wedge: a partial swing with a percentage.
-- Driver is only allowed off the tee. Woods are excluded from bunkers, and woods and long irons from deep rough.
+Round history feeds `insights` (Stats), `holePlan` (fairway-miss pattern, scoring history on that hole) and
+`handicapReport` (which feeds `targetAdvice`: tucked pins are attacked only by single-digit players with a scoring
+club).
 
-**Display arithmetic**: `displayMath` rounds each adjustment with a largest-remainder method, so the on-screen sum
-(distance + each line = plays-like) is always exact in yards and in meters.
+## Handicap estimate (`core/handicap.ts`)
 
-## The AI layer (`src/ai`, `worker/`)
+- Differential = (113 / slope) × (adjusted gross − rating), PCC = 0.
+- Hole-by-hole rounds are capped at net double bogey (par + 5 before an estimate exists), using stroke index when
+  entered and an approximation (flagged) when not.
+- Best 1–8 of the last 20 per the WHS table, with the short-record adjustments; soft/hard caps once there are 20.
+- 9-hole scores are paired, or once an estimate exists, combined with the expected score for the other nine
+  (0.52 × index + 1.2).
+- Rounds without rating/slope, incomplete rounds and unpaired nines are listed with the reason.
 
-- `buildBrief` converts a `Recommendation` into a small JSON brief in the golfer's units. It carries the situation,
-  the **locked decision**, the bag, and an optional free-text note ("tree overhanging left").
-- The Worker validates the brief (`isValidBrief`: types, lengths, list sizes, 6 KB cap) before any model call. It
-  then calls Claude with a structured-output JSON schema `{ take, concern }`, low effort, a 15 s timeout and server-side
-  refusal fallbacks.
-- `checkTake` runs on the Worker **and again in the browser**. It rejects:
-  - wrong shape, empty text or oversized text → `malformed`
-  - any club that isn't the pick or a listed alternative → `contradiction`
-  - any yardage that doesn't match a number from the brief (±2) → `contradiction`
-- `concern` is shown as a flagged "Heads-up" and never changes a number.
-- One request per unique situation. Results are cached by brief key, and a new situation aborts any in-flight request.
-- Every failure (`unconfigured`, `offline`, `timeout`, `unavailable`, `rate-limited`, `malformed`, `contradiction`)
-  maps to one calm sentence. The deterministic answer and the offline caddie voice are always on screen already.
+## Rangefinder (`core/geo.ts`, `core/rangefinder.ts`, `services/osm.ts`, `ui/Rangefinder.tsx`)
 
-## Live conditions (`src/services/conditions.ts`)
+- GPS fix (watchPosition, high accuracy) → targets: greens from OpenStreetMap (polygon centroid and outline) and
+  pin spots the golfer saved per course/hole.
+- Front/back: where the line to the green centre crosses the green outline.
+- Target choice: the current hole's saved pin → the current hole's mapped green → what the compass points at →
+  nearest. The AR marker uses an assumed field of view and is labelled approximate.
+- Flag sizing: pinhole model, distance = flag height × focal length / pixel span, with ±(2 px marking + 4% flag
+  height + 15% field of view when uncalibrated). Calibration stores the camera's long-side field of view.
 
-GPS position → Open-Meteo current wind, gusts, temperature and elevation. Open-Meteo needs no key, so the browser calls
-it directly and no secret is involved. Weather gives an absolute wind direction, so the golfer taps which way they're
-hitting (N, NE, …) and CADDAIE converts it to "into / off the right / helping". Denied permission, a timeout, being
-offline or a bad payload all fall back to the manual inputs with a clear message.
+## Swing analysis (`services/pose.ts`, `core/swing.ts`)
 
-## Persistence (`src/state/profile.ts`)
+- MediaPipe Pose Landmarker (lite) runs in the browser in VIDEO mode. Clips over 7 s get a 10 fps scan to find
+  impact, then a 30 fps pass around it.
+- Key positions from the hands: impact = fastest low hands, top = highest hands before impact, takeaway = last
+  frame at address. Target direction is read from the swing, so handedness and mirrored video don't matter.
+- Metrics per angle: tempo, head, backswing length (both); stance width, shoulder and hip turn (apparent width
+  ratios), lead arm, hips-before-hands transition, finish weight (face-on); spine angle, posture through impact,
+  hand-path indicator (down the line). Anything the angle can't support is returned as "Not measured".
+- Tendencies: an issue present in 3+ of the last 6 swings where that check was measured.
 
-The profile (bag, units, handedness, tendency, home altitude, AI settings) and the last shot live in `localStorage`.
-Everything read back is sanitised field by field, so corrupt or old data degrades to defaults instead of a blank screen.
-Private-mode Safari, which throws on write, is detected and reported once in Settings.
+## Persistence
+
+All reads are sanitised field by field (`state/*.ts`), so old or corrupt data degrades to defaults. Private-mode
+Safari, which throws on write, is detected and reported. `navigator.storage.persist()` is requested once there are
+rounds. Backup files contain everything except videos.
 
 ## PWA
 
-The manifest has any and maskable icons, and there is an Apple touch icon, standalone display, theme colours and
-safe-area insets. A build-time plugin in `vite.config.ts` generates `sw.js` with the exact hashed asset list. Pages
-are network-first with a cached-shell fallback. Hashed assets are cache-first. Weather and AI requests are never
-cached.
+The manifest has any and maskable icons; standalone display; safe-area insets. `sw.js` is generated at build with
+the exact hashed asset list: pages network-first with a cached-shell fallback, assets cache-first, and the swing
+runtime and model cached on first use in a cache that survives app updates. Weather, map and AI requests are never
+cached by the service worker (maps are cached by the app in localStorage).

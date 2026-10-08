@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, 'claude/caddaie-master-migration-4dtzu8']
+    branches: [main]
   workflow_dispatch:
 
 permissions:

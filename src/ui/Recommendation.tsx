@@ -1,45 +1,63 @@
-/** The answer. Everything else on screen exists to feed this card. */
+/** The answer. Everything else on the Caddie screen exists to feed this card. */
 import { localTake } from '../ai/localVoice';
 import { aimText, displayMath, fmtDistance, swingText } from '../core/format';
+import type { ClubDistanceStat } from '../core/shots';
+import type { TargetAdvice } from '../core/strategy';
 import type { CaddieResult, Recommendation as Rec } from '../core/types';
 import { distanceLabel, type Units } from '../core/units';
 
 const CONFIDENCE_TEXT = { high: 'Confident', medium: 'Good call', low: 'Tough one' } as const;
 
-export function RecommendationCard({ result, units, onFocusField }: { result: CaddieResult; units: Units; onFocusField: (f: string) => void }) {
+interface Props {
+  result: CaddieResult;
+  units: Units;
+  onFocusField: (f: string) => void;
+  advice: TargetAdvice | null;
+  clubStat: ClubDistanceStat | null;
+  learned: boolean;
+  usePersonalLine: boolean;
+}
+
+export function RecommendationCard({ result, units, onFocusField, advice, clubStat, learned, usePersonalLine }: Props) {
   if (result.status !== 'ok') {
     const isInvalid = result.status === 'invalid';
     const text = isInvalid ? result.message : result.prompt;
     return (
       <section class={`hero hero-empty${isInvalid ? ' hero-invalid' : ''}`} aria-live="polite" data-testid="recommendation" aria-label="Caddie recommendation">
-        <p class="hero-kicker">{isInvalid ? 'Check that number' : 'Ready when you are'}</p>
+        <p class="hero-kicker">{isInvalid ? 'Check that number' : 'What should I hit?'}</p>
         <p class="hero-ask" role={isInvalid ? 'alert' : undefined}>
           {text}
         </p>
-        {result.field === 'clubs' ? (
+        {result.field === 'clubs' && (
           <button type="button" class="btn" onClick={() => onFocusField('settings')}>
-            Open Settings
-          </button>
-        ) : (
-          <button type="button" class="btn ghost" onClick={() => onFocusField(result.field)}>
-            {result.field === 'distance' ? 'Enter distance' : 'Fix it'}
+            Open your bag
           </button>
         )}
       </section>
     );
   }
-  return <Answer rec={result} units={units} />;
+  return <Answer rec={result} units={units} advice={advice} clubStat={clubStat} learned={learned} usePersonalLine={usePersonalLine} />;
 }
 
-function Answer({ rec, units }: { rec: Rec; units: Units }) {
+function personalLine(rec: Rec, stat: ClubDistanceStat | null, learned: boolean, units: Units): string | null {
+  if (!stat || stat.count < 3) return null;
+  const n = fmtDistance(stat.recent, units);
+  const club = rec.club.name.replace(/ Iron$/, '-iron').replace(/ Wood$/, '-wood').replace(/ Hybrid$/, '-hybrid').toLowerCase();
+  return learned ? `Using your recent ${club} average of ${n} (${stat.count} shots).` : `Your recent ${club} average is ${n}.`;
+}
+
+function Answer({ rec, units, advice, clubStat, learned, usePersonalLine }: Omit<Props, 'result' | 'onFocusField'> & { rec: Rec }) {
   const unit = distanceLabel(units.distance);
-  const { total } = displayMath(rec, units);
-  const aim = aimText(rec.aim, units);
+  const { total, distance } = displayMath(rec, units);
+  const personal = usePersonalLine ? personalLine(rec, clubStat, learned, units) : null;
+  const strategic = advice && (advice.why || advice.aim !== 'Aim at the flag.');
+  const line = strategic ? [advice!.aim, advice!.why, personal].filter(Boolean).join(' ') : [localTake(rec, units), personal].filter(Boolean).join(' ');
   return (
     <section class="hero" aria-live="polite" data-testid="recommendation" aria-label="Caddie recommendation">
       <div class="hero-top">
-        <p class="hero-kicker">
-          CADD<span class="ai-ink">AI</span>E says
+        <p class="hero-distance">
+          <strong>{distance}</strong> {unit.toUpperCase()}
+          {total !== distance && <span> · plays {total}</span>}
         </p>
         <span class={`pill conf-${rec.confidence}`}>{CONFIDENCE_TEXT[rec.confidence]}</span>
       </div>
@@ -49,6 +67,9 @@ function Answer({ rec, units }: { rec: Rec; units: Units }) {
       <p class="hero-swing" data-testid="swing">
         {swingText(rec)}
         {rec.swing === 'partial' && rec.swingPct !== undefined && ` · ~${Math.round(rec.swingPct * 100)}%`}
+      </p>
+      <p class="hero-take" data-testid="local-take">
+        “{line}”
       </p>
       <dl class="hero-stats">
         <div>
@@ -81,12 +102,14 @@ function Answer({ rec, units }: { rec: Rec; units: Units }) {
           </div>
         )}
       </dl>
-      <p class="hero-take" data-testid="local-take">
-        {localTake(rec, units)}
-      </p>
       {rec.aim.yards !== 0 && rec.aim.reasons.length > 0 && (
-        <p class="hero-aim-why">
-          {aim} — {rec.aim.reasons.join(', ')}.
+        <p class="hero-note">
+          {aimText(rec.aim, units)}: {rec.aim.reasons.join(', ')}.
+        </p>
+      )}
+      {advice?.safeMiss && (
+        <p class="hero-note" data-testid="safe-miss">
+          {advice.safeMiss}
         </p>
       )}
       {rec.alternatives.length > 0 && (
@@ -103,14 +126,17 @@ function Answer({ rec, units }: { rec: Rec; units: Units }) {
 }
 
 /** The arithmetic, shown so the golfer can trust (or overrule) the number. */
-export function WhyPanel({ rec, units }: { rec: Rec; units: Units }) {
+export function WhyPanel({ rec, units, learned }: { rec: Rec; units: Units; learned: boolean }) {
   const unit = distanceLabel(units.distance);
   const { distance, rows, total } = displayMath(rec, units);
   return (
-    <section class="card why" aria-labelledby="why-title">
-      <h2 id="why-title" class="card-title">
-        Why
-      </h2>
+    <details class="card why">
+      <summary>
+        <span class="card-title">The math</span>
+        <span class="muted">
+          {distance} → {total} {unit}
+        </span>
+      </summary>
       <table class="math" data-testid="math">
         <tbody>
           <tr>
@@ -135,7 +161,9 @@ export function WhyPanel({ rec, units }: { rec: Rec; units: Units }) {
             </td>
           </tr>
           <tr class="carry">
-            <th scope="row">{rec.club.name} carries</th>
+            <th scope="row">
+              {rec.club.name} {learned ? 'averages (your shots)' : 'carries'}
+            </th>
             <td>
               {fmtDistance(rec.club.carry, units)} {unit}
             </td>
@@ -149,6 +177,6 @@ export function WhyPanel({ rec, units }: { rec: Rec; units: Units }) {
           ))}
         </ul>
       )}
-    </section>
+    </details>
   );
 }

@@ -1,61 +1,77 @@
 # CADD<ins>AI</ins>E
 
-**The AI golf caddie.** Tell it the shot and get the club, the number and the reason at a glance.
+**Your golf caddie, in your pocket.** A scorekeeper, rangefinder, swing coach, stats analyst, handicap tracker and
+personal caddie in one mobile web app, built for iPhone Safari and the Home Screen.
 
-CADDAIE is a mobile-first, installable web app for the golfer standing over the ball with a phone. A deterministic
-yardage engine on the phone does all the math: club, swing, plays-like number and aim. An optional AI layer explains
-that decision in caddie language, but it can never change it.
+- **Live app:** https://scottyfncodes.github.io/CADDAIE/ (GitHub Pages). On iPhone: Share › Add to Home Screen.
+- **Free and private:** browser APIs, open-source libraries and free, keyless data only. No account. Rounds and
+  swing videos stay on the phone.
 
-- **Live app:** https://scottyfncodes.github.io/CADDAIE/ (GitHub Pages)
-- **AI proxy:** `worker/`, a Cloudflare Worker that keeps the Anthropic API key server-side
+## The loop
 
-## What it does
+**See → Understand → Advise → Learn.** The camera is CADDAIE's eyes, your rounds are its memory, the stats are its
+understanding, and the caddie's call is the advice. Every round makes the next recommendation more personal.
 
-| You give it | You get back |
+| Tab | What it does |
 | --- | --- |
-| Distance (the only required input) | **The club**, in huge type |
-| Wind speed and direction relative to your target, or live weather | **The swing**: full, smooth, choke down, knockdown, partial |
-| Elevation change | **Plays-like number** with every adjustment itemised |
-| Lie (tee, fairway, first cut, rough, deep rough, bunker, hardpan) | **Aim**: yards left or right, and why |
-| Stance (up, down or sidehill) | Alternatives ("6 Iron only if you're flushing it") |
-| Where the trouble is (short, long, left, right) | Short caddie notes, plus an optional AI read |
-| Temperature and altitude (optional; filled by live weather) | A confidence level |
+| **Round** | Start a round (find the course on OpenStreetMap or type it), score each hole in two or three taps: score, putts, tee shot, GIR (auto), penalties, club, notes, GPS shot tracking. One line of feedback after every hole. Finish with a summary: score, vs your average, putts, GIR, fairways, penalties, strongest area, biggest opportunity, key takeaway. |
+| **Caddie** | One clear call: distance, club, swing, a one-sentence reason ("Favor the middle. Pin is back-left. Your recent 7-iron average is 155."), aim, safest miss, and the hole plan during a round. Wind, elevation, lie, stance, trouble, pin and air feed the deterministic engine. |
+| **Rangefinder** (in Caddie) | Camera view + GPS + compass. Distance to the centre, front and back of greens mapped in OpenStreetMap, or to a pin spot you saved; green height from a terrain model; flag-size estimate with an error range. A help panel says what it can and can't measure. |
+| **Stats** | "Your game right now" (putting, approach, driving, penalties: good / OK / watch, improving / slipping), the single biggest opportunity in strokes, then scoring average, FIR, GIR, putts, putts per GIR, penalties, par-3/4/5 and front/back scoring, score trend and club distances. |
+| **Swing** | Down-the-line or face-on positioning guide, hands-free recording (countdown + beeps) or a video from Photos, slow-motion review, on-device pose analysis (MediaPipe), one thing to work on, key frames with the skeleton, save, compare with your previous or best swing, recurring tendencies. |
+| **Handicap** | A CADDAIE estimate from your rounds (World Handicap System arithmetic), shown separately from your official Handicap Index (which you can type in). Differentials, which scores count, trend, course handicap, a plain-English explanation, and exactly what's missing when there isn't enough data. |
+| **Settings** | Your bag: typical carry, tracked average, confidence and notes per club, plus "let the caddie use my tracked averages". Units, handedness, theme (Sun mode for bright light), flagstick height and calibration, where your data lives, backup and restore. |
 
-If information is missing, CADDAIE asks for the smallest thing it needs ("How far to the target?") rather than guessing.
+## Honest by design
 
-## Design principles
+CADDAIE never invents precision. Where a phone can't measure something, it says so and offers the best real fallback.
 
-1. **Situation → Recommendation → Reasoning → Shot.** The answer card is the first thing on screen. When you scroll
-   down to the inputs, a compact answer pill stays in the header.
-2. **Deterministic math, AI words.** All arithmetic lives in `src/core/` as pure, tested functions. The AI gets a
-   *locked* brief and may only explain it. Any AI answer that names a different club or a yardage the engine didn't
-   produce is thrown away, both on the proxy and again in the browser.
-3. **Never held hostage by the network.** GPS, weather, the AI proxy and the network itself are all optional. Every
-   failure has a plain-language message and a manual path. The app shell is cached by a service worker, so the
-   caddie works offline.
-4. **Phone in the sun.** Large tap targets (48px or more), high contrast, a numeric keypad for the one number you
-   type, steppers for everything else, and light and dark themes.
+- **Rangefinding.** Safari gives web apps no laser, LiDAR or depth data, so a camera image alone can't give a golf
+  distance. Yardages come from GPS to a known target, with the GPS accuracy shown. Flag sizing is labelled
+  approximate and always carries an error range.
+- **Course data.** OpenStreetMap coverage depends on volunteers. Without mapped greens, you save the pin spot when
+  you reach the green; it works offline on every later round. Ratings and slopes come from your scorecard.
+- **Swing analysis.** Only body movement visible to one camera: tempo, head movement, posture, turn, sequencing,
+  hand path (as an indicator), balance. Each check is measured only from the angle that can see it. No club speed,
+  path or face numbers.
+- **Handicap.** Always labelled "CADDAIE estimate, not an official Handicap Index". There is no playing-conditions
+  adjustment or association record, and the app says so.
+- **Wind and elevation.** Live wind is a weather-station reading (Open-Meteo); green height is from a ~90 m terrain
+  model. Both are labelled as such.
+- **Stats.** "Good / watch" ratings compare you with approximate benchmarks for your scoring level and say so. The
+  opportunity line states literal numbers from your rounds ("2.4 penalty strokes per round").
+
+## Free-first stack
+
+| Need | How |
+| --- | --- |
+| UI | Preact + TypeScript + Vite |
+| Golf math, handicap, stats, strategy, swing metrics | `src/core`, pure functions with unit tests |
+| Storage | `localStorage` (rounds, courses, shots, profile), IndexedDB (swing videos and analyses), JSON backup |
+| Offline | Service worker: app shell precached; swing model cached on first use; course maps cached on the device |
+| Pose estimation | MediaPipe Pose Landmarker (Apache-2.0), WASM runtime and model shipped with the app |
+| Courses, greens, pars | OpenStreetMap via the Overpass API (free, keyless; © OpenStreetMap contributors) |
+| Weather, terrain height | Open-Meteo (free, keyless) |
+| Position, heading, camera | Geolocation, DeviceOrientation (with the iOS permission prompt), getUserMedia, MediaRecorder |
+
+An optional explanation service (`worker/`, a Cloudflare Worker that calls a paid model API) still exists for anyone
+who wants to run it. It's off unless configured, can only explain a locked decision, and nothing in the app depends
+on it.
 
 ## Project layout
 
 ```
 src/
-  core/        Deterministic golf engine. Pure TypeScript, no I/O.
-    types.ts        Domain model (clubs, shot input, recommendation)
-    adjustments.ts  Rules of thumb: wind, elevation, temperature, altitude, lie, stance
-    recommend.ts    Validation → adjustments → club selection → aim → notes
-    clubs.ts        Default bag, lie restrictions, gap analysis
-    units.ts        yd/m, mph/kmh, °F/°C, ft/m and sum-preserving rounding
-    format.ts       Display formatting in the golfer's units
-  ai/          AI layer (contract, brief builder, client, offline voice)
-    contract.ts     Shared by browser and Worker: brief/take schema + contradiction checks
-  services/    Live conditions: GPS + Open-Meteo (keyless)
-  state/       Local profile and last shot, with sanitised persistence
-  ui/          Preact components and CSS
-worker/        CADDAIE API: Cloudflare Worker proxy to Claude
-tests/unit     Vitest: engine, units, persistence, AI contract/client, weather, Worker
-tests/e2e      Playwright: user flows on iPhone and desktop viewports
-docs/          Architecture and deployment notes
+  core/        Pure, deterministic logic (no I/O): recommend, adjustments, clubs, units, format,
+               round, stats, handicap, shots, strategy, geo, rangefinder, swing
+  state/       Profile, rounds/courses/shots (sanitised localStorage), swings (IndexedDB), backup
+  services/    Weather, sensors (GPS, compass, terrain), camera, OpenStreetMap, pose (MediaPipe)
+  ai/          Optional explanation contract and client (shared contract with worker/)
+  ui/          Preact screens: App shell, Round, Caddie, Rangefinder, Stats, Swing, Handicap, Settings
+public/models/ MediaPipe pose model
+worker/        Optional explanation proxy (Cloudflare Worker)
+tests/unit     Vitest: engine, handicap, stats, rounds, strategy, geometry, rangefinder, swing, state, services
+tests/e2e      Playwright: every tab on iPhone and desktop viewports, offline, mocked GPS/maps/weather
 ```
 
 ## Develop
@@ -68,36 +84,9 @@ npm run test:e2e       # Playwright (builds and serves the production bundle)
 npm run check          # typecheck + unit + build + e2e
 ```
 
-To run with the AI layer locally:
-
-```bash
-cd worker && npm install
-echo 'ANTHROPIC_API_KEY=sk-ant-...' > .dev.vars   # git-ignored
-npx wrangler dev                                  # http://localhost:8787
-# then in the app: Settings → AI caddie → API address = http://localhost:8787
-```
+Camera, compass and GPS need https (or localhost). To try them on a phone, deploy or use a tunnel to `npm run preview`.
 
 ## Deploy
 
-See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). In short:
-
-- **Client:** `.github/workflows/deploy.yml` builds and publishes `dist/` to GitHub Pages.
-- **AI proxy (optional):** `cd worker && npx wrangler secret put ANTHROPIC_API_KEY && npx wrangler deploy`, then set
-  the repo variable `CADDAIE_API_URL` to the Worker URL and re-run the Pages deploy.
-
-Without the proxy, CADDAIE is fully functional: every number comes from the on-device engine, and the AI panel says
-it isn't connected.
-
-## Security
-
-- No secrets live in client code, the repo or the build. The browser only knows the proxy's public URL.
-- The proxy accepts only CADDAIE origins, validates and size-limits every request, rate-limits per IP, and returns
-  stable error codes, never upstream error text.
-- A history audit found no committed credentials. The former Yahoo proxy read its client ID and secret from Worker
-  environment variables.
-
-## History
-
-This repository was previously `the-wire-proxy`, a Cloudflare Worker that proxied Yahoo Fantasy Sports OAuth for a
-different project. That code had nothing to do with golf and was removed. Its useful idea, a Worker that keeps
-credentials server-side, lives on as `worker/`. The Caddy AI concept started as a CodePen prototype.
+`.github/workflows/deploy.yml` builds and publishes `dist/` to GitHub Pages on every push to `main`. See
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

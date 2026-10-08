@@ -5,13 +5,13 @@ CADDAIE has two independently deployable parts:
 | Part | Where | Required? | Secrets |
 | --- | --- | --- | --- |
 | Web app (`/`) | GitHub Pages | Yes | None |
-| CADDAIE API (`worker/`) | Cloudflare Workers | No: enables AI explanations | `ANTHROPIC_API_KEY` (Worker secret) |
+| Explanation proxy (`worker/`) | Cloudflare Workers | No, and off by default (it calls a paid model API) | `ANTHROPIC_API_KEY` (Worker secret) |
 
 The app is complete without the API. All recommendations are computed on the device.
 
 ## 1. Web app → GitHub Pages
 
-`.github/workflows/deploy.yml` runs on pushes to `main` (and the migration branch). It runs the unit tests, builds with
+`.github/workflows/deploy.yml` runs on pushes to `main`. It runs the unit tests, builds with
 Vite, and publishes `dist/` with `actions/deploy-pages`.
 
 One-time repo setup, if Pages isn't already on:

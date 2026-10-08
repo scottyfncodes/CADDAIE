@@ -20,3 +20,9 @@ export const shot = (over: Partial<ShotInput> = {}): ShotInput => ({
   altitudeFt: null,
   ...over,
 });
+
+/** In-memory KeyValueStore for persistence tests. */
+export function memoryStore() {
+  const m = new Map<string, string>();
+  return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v), removeItem: (k: string) => void m.delete(k) };
+}
