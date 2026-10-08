@@ -27,7 +27,7 @@ export function TroublePicker({ value, onChange }: { value: Trouble[]; onChange:
         <svg viewBox="0 0 60 44" width="60" height="44">
           <ellipse cx="30" cy="24" rx="27" ry="17" fill="var(--green)" />
           <line x1="30" y1="26" x2="30" y2="4" stroke="var(--text)" stroke-width="2" stroke-linecap="round" />
-          <path d="M30 4 L41 8 L30 12 Z" fill="var(--ai)" />
+          <path d="M30 4 L41 8 L30 12 Z" fill="var(--flag)" />
         </svg>
       </div>
     </div>

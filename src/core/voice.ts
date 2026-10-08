@@ -1,11 +1,10 @@
 /**
- * The offline caddie voice: a deterministic one-liner built from the
- * recommendation. Always available instantly — the AI take is an optional
- * upgrade on top, never a dependency.
+ * The caddie's voice: a deterministic one-liner built from the
+ * recommendation. No model, no network: it can only say what the engine decided.
  */
-import { aimText, displayMath, fmtDistance, swingText } from '../core/format';
-import type { Recommendation } from '../core/types';
-import { distanceLabel, type Units } from '../core/units';
+import { aimText, displayMath, fmtDistance, swingText } from './format';
+import type { Recommendation } from './types';
+import { distanceLabel, type Units } from './units';
 
 export function localTake(rec: Recommendation, units: Units): string {
   const unit = distanceLabel(units.distance);

@@ -18,9 +18,17 @@ export interface Profile {
   handedness: Handedness;
   tendency: DistanceTendency;
   baseline: { altitudeFt: number; temperatureF: number };
-  /** Optional override of the AI endpoint (the build-time default is used when empty). */
-  aiEndpoint: string;
-  aiEnabled: boolean;
+  theme: 'auto' | 'light' | 'dark';
+  /** Let the caddie use the golfer's tracked averages instead of the entered carry, once there's enough data. */
+  learnFromShots: boolean;
+  /** Official Handicap Index the golfer typed in from their club or association. Never computed. */
+  officialIndex: number | null;
+  /** Rangefinder flag-sizing calibration (camera vertical field of view, degrees). */
+  flagVfov: number | null;
+  flagFt: 7 | 8;
+  /** Optional notes per club id. */
+  clubNotes: Record<string, string>;
+  onboarded: boolean;
 }
 
 export const defaultProfile = (): Profile => ({
@@ -30,8 +38,13 @@ export const defaultProfile = (): Profile => ({
   handedness: 'right',
   tendency: 'neutral',
   baseline: { altitudeFt: 0, temperatureF: 70 },
-  aiEndpoint: '',
-  aiEnabled: true,
+  theme: 'auto',
+  learnFromShots: true,
+  officialIndex: null,
+  flagVfov: null,
+  flagFt: 7,
+  clubNotes: {},
+  onboarded: false,
 });
 
 export const defaultSituation = (): ShotInput => ({
@@ -50,6 +63,10 @@ const num = (v: unknown, fallback: number, min = -Infinity, max = Infinity) =>
   typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max ? v : fallback;
 const oneOf = <T extends string>(v: unknown, options: readonly T[], fallback: T): T =>
   typeof v === 'string' && (options as readonly string[]).includes(v) ? (v as T) : fallback;
+const maybeNum = (v: unknown, min: number, max: number) => {
+  const n = num(v, NaN, min, max);
+  return Number.isNaN(n) ? null : n;
+};
 const str = (v: unknown, fallback: string, max = 200) => (typeof v === 'string' ? v.slice(0, max) : fallback);
 
 const CLUB_TYPES: readonly ClubType[] = ['driver', 'wood', 'hybrid', 'iron', 'wedge'];
@@ -96,9 +113,21 @@ export function sanitizeProfile(raw: unknown): Profile {
       altitudeFt: num(baseline.altitudeFt, d.baseline.altitudeFt, -1500, 14000),
       temperatureF: num(baseline.temperatureF, d.baseline.temperatureF, -10, 125),
     },
-    aiEndpoint: str(raw.aiEndpoint, '', 300),
-    aiEnabled: raw.aiEnabled !== false,
+    theme: oneOf(raw.theme, ['auto', 'light', 'dark'] as const, d.theme),
+    learnFromShots: raw.learnFromShots !== false,
+    officialIndex: maybeNum(raw.officialIndex, -10, 54),
+    flagVfov: maybeNum(raw.flagVfov, 20, 120),
+    flagFt: raw.flagFt === 8 ? 8 : 7,
+    clubNotes: sanitizeNotes(raw.clubNotes),
+    onboarded: raw.onboarded === true,
   };
+}
+
+function sanitizeNotes(raw: unknown): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!isObj(raw)) return out;
+  for (const [k, v] of Object.entries(raw).slice(0, 30)) if (typeof v === 'string' && v.trim()) out[k.slice(0, 20)] = v.slice(0, 140);
+  return out;
 }
 
 export function sanitizeSituation(raw: unknown): ShotInput {

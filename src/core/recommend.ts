@@ -1,7 +1,7 @@
 /**
  * The deterministic caddie. Given a situation and a bag, produce ONE club,
  * a swing, an aim and the arithmetic behind it. This is the authority on
- * numbers — the AI layer may explain it but can never change it.
+ * numbers.
  */
 import {
   RULES,

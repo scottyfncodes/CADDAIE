@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, 'claude/caddaie-master-migration-4dtzu8']
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -27,10 +27,6 @@ jobs:
       - run: npm test
       - name: Build
         run: npm run build
-        env:
-          # Public address of the CADDAIE API worker (a URL, not a secret).
-          # Set it under Settings → Secrets and variables → Actions → Variables.
-          VITE_CADDAIE_API_URL: ${{ vars.CADDAIE_API_URL }}
       - uses: actions/configure-pages@v5
         with:
           enablement: true

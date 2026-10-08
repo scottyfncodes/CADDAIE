@@ -22,7 +22,7 @@ export function WindPicker({ fromDeg, onChange, disabled }: { fromDeg: number; o
       <div class="wind-center" aria-hidden="true">
         <svg viewBox="0 0 40 40" width="40" height="40">
           <line x1="20" y1="34" x2="20" y2="8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
-          <path d="M20 8 L30 12 L20 16 Z" fill="var(--ai)" />
+          <path d="M20 8 L30 12 L20 16 Z" fill="var(--flag)" />
           <circle cx="20" cy="34" r="3" fill="currentColor" />
         </svg>
         {!disabled && (
