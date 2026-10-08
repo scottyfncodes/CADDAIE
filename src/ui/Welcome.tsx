@@ -1,4 +1,4 @@
-/** First launch: what CADDAIE is, in five lines, and one obvious next step. */
+/** First launch: what HitWhat is, in five lines, and one obvious next step. */
 import type { Tab } from './context';
 import { Icon } from './kit';
 import { Wordmark } from './Wordmark';
@@ -16,8 +16,8 @@ export function Welcome({ onDone }: { onDone: (next: Tab) => void }) {
     <main class="welcome" data-testid="welcome">
       <div class="welcome-top">
         <Wordmark size="lg" />
-        <h1>Your caddie, in your pocket.</h1>
-        <p class="lede">CADDAIE learns your game from every round you play, then gives you one clear decision when you're standing over the ball.</p>
+        <h1>What do I hit here?</h1>
+        <p class="lede">Ask it on every shot. HitWhat learns your game from every round you play, then gives you one clear call when you're standing over the ball.</p>
       </div>
       <ul class="welcome-list">
         {ROWS.map((r) => (

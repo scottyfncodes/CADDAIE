@@ -2,7 +2,7 @@ import type { Club, ClubType, Lie } from './types';
 
 /**
  * A typical mid-handicap bag. Good enough to be useful on first launch;
- * the golfer edits carries in Settings to make CADDAIE meaningfully better.
+ * the golfer edits carries in Settings to make HitWhat meaningfully better.
  */
 export const DEFAULT_CLUBS: readonly Club[] = [
   { id: 'dr', name: 'Driver', short: 'Dr', type: 'driver', carry: 230, inBag: true },

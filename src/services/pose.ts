@@ -1,6 +1,6 @@
 /**
  * On-device pose estimation with MediaPipe Pose Landmarker (Apache-2.0).
- * The library, its WebAssembly runtime and the model ship with CADDAIE and are
+ * The library, its WebAssembly runtime and the model ship with HitWhat and are
  * loaded only when the golfer analyses a swing. Frames are processed in the
  * browser; the video is never uploaded.
  */

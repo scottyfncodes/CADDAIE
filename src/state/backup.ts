@@ -1,5 +1,5 @@
 /**
- * Backup and restore. CADDAIE has no account and no server copy of your data,
+ * Backup and restore. HitWhat has no account and no server copy of your data,
  * so a file you keep is the way to move to a new phone or survive a cleared browser.
  * Videos are not included (they stay in this browser); swing analyses are.
  */
@@ -7,7 +7,9 @@ import type { SavedSwing } from './swings';
 import { sanitizeGolf, type GolfData } from './golf';
 import { sanitizeProfile, type Profile } from './profile';
 
-export const BACKUP_FORMAT = 'caddaie-backup';
+export const BACKUP_FORMAT = 'hitwhat-backup';
+/** Backups saved before the app was called HitWhat. Still restorable. */
+const LEGACY_FORMATS: readonly string[] = ['caddaie-backup'];
 
 export interface Backup {
   format: typeof BACKUP_FORMAT;
@@ -29,10 +31,10 @@ export function parseBackup(text: string): RestoreResult {
   try {
     raw = JSON.parse(text);
   } catch {
-    return { ok: false, reason: 'That file isn’t a CADDAIE backup.' };
+    return { ok: false, reason: 'That file isn’t a HitWhat backup.' };
   }
   const b = raw as Partial<Backup>;
-  if (!b || b.format !== BACKUP_FORMAT) return { ok: false, reason: 'That file isn’t a CADDAIE backup.' };
+  if (!b || (b.format !== BACKUP_FORMAT && !LEGACY_FORMATS.includes(String(b.format)))) return { ok: false, reason: 'That file isn’t a HitWhat backup.' };
   const golf = sanitizeGolf((b.golf ?? {}) as Record<string, unknown>);
   const swings = (Array.isArray(b.swings) ? b.swings : [])
     .filter((s) => s && typeof s.id === 'string' && s.analysis?.ok === true && Array.isArray(s.analysis.metrics))

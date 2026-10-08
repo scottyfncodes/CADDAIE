@@ -20,7 +20,7 @@ export type ConditionsResult = { ok: true; conditions: LiveConditions } | { ok: 
 
 export const CONDITIONS_FAILURE_TEXT: Record<ConditionsFailure, string> = {
   unsupported: "This browser can't share location. Enter wind and temperature by hand.",
-  denied: 'Location is off for CADDAIE. Enter wind by hand, or allow location in Settings › Safari.',
+  denied: 'Location is off for HitWhat. Enter wind by hand, or allow location in Settings › Safari.',
   'position-unavailable': "Couldn't find your position. Enter wind by hand.",
   offline: "You're offline. Enter wind by hand — the caddie still works.",
   timeout: 'Weather took too long. Enter wind by hand.',

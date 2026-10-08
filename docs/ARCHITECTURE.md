@@ -1,4 +1,4 @@
-# CADDAIE architecture
+# HitWhat architecture
 
 ```
  ┌────────────────────────── Browser (installable PWA, works offline) ──────────────────────────┐
@@ -26,7 +26,7 @@
 2. **Local first.** Scoring, the caddie, stats and the handicap estimate need no network. Rounds are saved on every
    tap. Network features (maps, weather, terrain) are optional, time-limited and cached.
 3. **Honest limits.** Each capability states its source and accuracy: GPS ± on yardages, "approximate" on flag
-   sizing and terrain height, "not measured from this angle" on swing checks, "CADDAIE estimate, not official" on
+   sizing and terrain height, "not measured from this angle" on swing checks, "HitWhat estimate, not official" on
    the handicap, "approximate benchmarks" on stats ratings.
 
 ## The learning loop

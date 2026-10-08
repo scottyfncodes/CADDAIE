@@ -1,8 +1,9 @@
 {
-  "name": "caddaie",
+  "name": "hitwhat",
   "version": "1.0.0",
   "private": true,
-  "description": "CADDAIE — a private, offline-capable golf caddie: scoring, rangefinder, swing analysis, stats and handicap.",
+  "homepage": "https://hitwhat.com/",
+  "description": "HitWhat — What do I hit here? A private, offline-capable golf caddie: scoring, rangefinder, swing analysis, stats and handicap.",
   "type": "module",
   "scripts": {
     "dev": "vite",

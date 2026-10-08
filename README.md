@@ -1,15 +1,18 @@
-# CADD<ins>AI</ins>E
+# HITWHAT
 
-**Your golf caddie, in your pocket.** A scorekeeper, rangefinder, swing coach, stats analyst, handicap tracker and
+**What do I hit here?** HitWhat answers the question every golfer asks over the ball. A scorekeeper, rangefinder, swing coach, stats analyst, handicap tracker and
 personal caddie in one mobile web app, built for iPhone Safari and the Home Screen.
 
-- **Live app:** https://scottyfncodes.github.io/CADDAIE/ (GitHub Pages). On iPhone: Share › Add to Home Screen.
+- **Live app:** https://scottyfncodes.github.io/HitWhat/ (GitHub Pages). On iPhone: Share › Add to Home Screen; it
+  installs as **HitWhat**.
+- **Domain:** https://hitwhat.com/ is the canonical home (set in the page metadata). Until the custom domain is
+  pointed at Pages, the GitHub Pages URL above is the live app. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 - **Free and private:** browser APIs, open-source libraries and free, keyless data only. No account. Rounds and
   swing videos stay on the phone.
 
 ## The loop
 
-**See → Understand → Advise → Learn.** The camera is CADDAIE's eyes, your rounds are its memory, the stats are its
+**See → Understand → Advise → Learn.** The camera is HitWhat's eyes, your rounds are its memory, the stats are its
 understanding, and the caddie's call is the advice. Every round makes the next recommendation more personal.
 
 | Tab | What it does |
@@ -19,12 +22,12 @@ understanding, and the caddie's call is the advice. Every round makes the next r
 | **Rangefinder** (in Caddie) | Camera view + GPS + compass. Distance to the centre, front and back of greens mapped in OpenStreetMap, or to a pin spot you saved; green height from a terrain model; flag-size estimate with an error range. A help panel says what it can and can't measure. |
 | **Stats** | "Your game right now" (putting, approach, driving, penalties: good / OK / watch, improving / slipping), the single biggest opportunity in strokes, then scoring average, FIR, GIR, putts, putts per GIR, penalties, par-3/4/5 and front/back scoring, score trend and club distances. |
 | **Swing** | Down-the-line or face-on positioning guide, hands-free recording (countdown + beeps) or a video from Photos, slow-motion review, on-device pose analysis (MediaPipe), one thing to work on, key frames with the skeleton, save, compare with your previous or best swing, recurring tendencies. |
-| **Handicap** | A CADDAIE estimate from your rounds (World Handicap System arithmetic), shown separately from your official Handicap Index (which you can type in). Differentials, which scores count, trend, course handicap, a plain-English explanation, and exactly what's missing when there isn't enough data. |
+| **Handicap** | A HitWhat estimate from your rounds (World Handicap System arithmetic), shown separately from your official Handicap Index (which you can type in). Differentials, which scores count, trend, course handicap, a plain-English explanation, and exactly what's missing when there isn't enough data. |
 | **Settings** | Your bag: typical carry, tracked average, confidence and notes per club, plus "let the caddie use my tracked averages". Units, handedness, theme (Sun mode for bright light), flagstick height and calibration, where your data lives, backup and restore. |
 
 ## Honest by design
 
-CADDAIE never invents precision. Where a phone can't measure something, it says so and offers the best real fallback.
+HitWhat never invents precision. Where a phone can't measure something, it says so and offers the best real fallback.
 
 - **Rangefinding.** Safari gives web apps no laser, LiDAR or depth data, so a camera image alone can't give a golf
   distance. Yardages come from GPS to a known target, with the GPS accuracy shown. Flag sizing is labelled
@@ -34,7 +37,7 @@ CADDAIE never invents precision. Where a phone can't measure something, it says 
 - **Swing analysis.** Only body movement visible to one camera: tempo, head movement, posture, turn, sequencing,
   hand path (as an indicator), balance. Each check is measured only from the angle that can see it. No club speed,
   path or face numbers.
-- **Handicap.** Always labelled "CADDAIE estimate, not an official Handicap Index". There is no playing-conditions
+- **Handicap.** Always labelled "HitWhat estimate, not an official Handicap Index". There is no playing-conditions
   adjustment or association record, and the app says so.
 - **Wind and elevation.** Live wind is a weather-station reading (Open-Meteo); green height is from a ~90 m terrain
   model. Both are labelled as such.

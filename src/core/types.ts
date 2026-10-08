@@ -1,5 +1,5 @@
 /**
- * Core CADDAIE domain types.
+ * Core HitWhat domain types.
  *
  * Everything in `src/core` is deterministic and side-effect free: no network,
  * no storage, no randomness, no AI. Internally all distances are yards,

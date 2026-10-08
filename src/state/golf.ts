@@ -6,6 +6,7 @@ import { defaultTee, emptyHole, type Course, type FairwayResult, type HoleScore,
 import type { ShotRecord } from '../core/shots';
 import type { KeyValueStore } from './profile';
 
+// Original storage namespace, kept so existing rounds survive the HitWhat rename.
 export const ROUNDS_KEY = 'caddaie.rounds';
 export const COURSES_KEY = 'caddaie.courses';
 export const SHOTS_KEY = 'caddaie.shots';
@@ -64,14 +65,14 @@ export function sanitizeRound(raw: unknown): Round | null {
   const date = num(raw.date, 0, 4102444800000);
   if (!rid || date === null) return null;
   const holeCount: 9 | 18 = raw.holeCount === 9 ? 9 : 18;
-  const source = raw.source === 'manual' ? 'manual' : 'caddaie';
+  const source = raw.source === 'manual' ? 'manual' : 'app'; // older data stored 'caddaie' here
   const tee = sanitizeTee(raw.tee, holeCount);
   const holes = source === 'manual' ? [] : Array.from({ length: holeCount }, (_, i) => sanitizeHole(Array.isArray(raw.holes) ? raw.holes[i] : null));
   const manualScore = source === 'manual' ? int(raw.manualScore, holeCount === 9 ? 20 : 40, holeCount === 9 ? 120 : 220) : null;
   return {
     id: rid,
     source,
-    status: raw.status === 'active' && source === 'caddaie' ? 'active' : 'complete',
+    status: raw.status === 'active' && source === 'app' ? 'active' : 'complete',
     date,
     courseId: id(raw.courseId),
     courseName: str(raw.courseName, 'Golf course', 60),

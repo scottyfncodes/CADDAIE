@@ -1,4 +1,4 @@
-/** Small, touch-first form controls shared across CADDAIE. */
+/** Small, touch-first form controls shared across HitWhat. */
 import type { ComponentChildren } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 

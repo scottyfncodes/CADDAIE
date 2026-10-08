@@ -1,6 +1,6 @@
 /**
  * GPS shot tracking: tap "Hitting from here" before each shot. When you hit
- * the next one (or mark where the ball finished), CADDAIE measures the walk.
+ * the next one (or mark where the ball finished), HitWhat measures the walk.
  * That is start-to-finish distance, so it includes roll, and it's only as
  * good as the two GPS fixes.
  */
@@ -70,7 +70,7 @@ export function ShotTracker({ hole, defaultClub, compact }: { hole: number | nul
   return (
     <section class={`tracker${compact ? ' compact' : ''}`} aria-label="Track shots with GPS" data-testid="tracker">
       {!compact && (
-        <p class="muted">Tap before each shot. CADDAIE measures it when you mark the next one, and learns your real distances.</p>
+        <p class="muted">Tap before each shot. HitWhat measures it when you mark the next one, and learns your real distances.</p>
       )}
       <label class="inline-select">
         <span>Club</span>

@@ -46,7 +46,7 @@ export function TeeEditor({ tee, onChange }: { tee: TeeInfo; onChange: (t: TeeIn
           <NumberField id="tee-slope" label="Slope rating" value={tee.slope} min={55} max={155} class="text-input" placeholder="e.g. 128" onChange={(v) => set({ slope: v !== null && v >= 55 && v <= 155 ? v : null })} />
         </label>
       </div>
-      <p class="fine">Rating and slope are printed on the scorecard. CADDAIE needs them to estimate your handicap.</p>
+      <p class="fine">Rating and slope are printed on the scorecard. HitWhat needs them to estimate your handicap.</p>
 
       <div class="field-head">
         <span class="field-label">Par · {total}</span>

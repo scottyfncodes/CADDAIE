@@ -257,7 +257,7 @@ function GpsMode({
               ? 'Loading course map…'
               : mapErr
                 ? `${OSM_FAILURE_TEXT[mapErr]} You can save a pin spot for each hole when you reach the green.`
-                : 'No mapped greens near you. When you reach the green, save its spot below — next time CADDAIE measures to it, even offline. Or try Flag size.'}
+                : 'No mapped greens near you. When you reach the green, save its spot below — next time HitWhat measures to it, even offline. Or try Flag size.'}
           </p>
         )}
 
@@ -483,7 +483,7 @@ function FlagMode({
 function RangeHelp({ onClose }: { onClose: () => void }) {
   return (
     <div class="rf-help" role="dialog" aria-label="What the rangefinder can measure" data-testid="rf-help-panel">
-      <h2>What CADDAIE can measure</h2>
+      <h2>What HitWhat can measure</h2>
       <ul>
         <li>
           <strong>GPS to the green.</strong> Your phone’s GPS position to a green mapped in OpenStreetMap, or to a pin spot you saved. Accuracy is your GPS accuracy, shown as ± on screen (typically 3–10 yards in the open).

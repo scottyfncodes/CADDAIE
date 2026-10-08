@@ -1,5 +1,5 @@
 /**
- * A CADDAIE handicap ESTIMATE, following the published World Handicap System
+ * A HitWhat handicap ESTIMATE, following the published World Handicap System
  * arithmetic as closely as on-device data allows. It is never an official
  * Handicap Index: there is no authorised scoring-record integration, no
  * Playing Conditions Calculation and no peer review.
@@ -250,7 +250,7 @@ export function explainEstimate(rep: HandicapReport): string {
   const n = Math.min(rep.rows.length, 20);
   const rule = differentialsUsed(n);
   if (!rule || rep.estimate === null) {
-    return `CADDAIE needs 3 scores with a course rating and slope to start an estimate. You have ${rep.rows.length}.`;
+    return `HitWhat needs 3 scores with a course rating and slope to start an estimate. You have ${rep.rows.length}.`;
   }
   const best = rule.use === 1 ? 'your best differential' : `the average of your best ${rule.use}`;
   const adj = rule.adjust ? `, minus ${Math.abs(rule.adjust).toFixed(1)} while your record is short` : '';

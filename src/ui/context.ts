@@ -55,5 +55,5 @@ export function useApp(): AppState {
   return v;
 }
 
-/** The golfer's handicap for strategy: official if entered, else the CADDAIE estimate. */
+/** The golfer's handicap for strategy: official if entered, else the HitWhat estimate. */
 export const playingIndex = (s: Pick<AppState, 'profile' | 'handicap'>) => s.profile.officialIndex ?? s.handicap.estimate;

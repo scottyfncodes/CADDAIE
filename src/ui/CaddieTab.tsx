@@ -356,7 +356,7 @@ function HolePlanCard({ round }: { round: Round }) {
   const yards = holeYardage(round, idx);
   const number = holeNumber(round, idx);
   const plan = useMemo(() => {
-    const done = golf.rounds.filter((r) => r.status === 'complete' && r.source === 'caddaie').sort((a, b) => b.date - a.date);
+    const done = golf.rounds.filter((r) => r.status === 'complete' && r.source === 'app').sort((a, b) => b.date - a.date);
     const misses = { left: 0, right: 0, hit: 0 };
     for (const r of done.slice(0, 10)) for (const h of r.holes) {
       if (h.fairway === 'left') misses.left++;

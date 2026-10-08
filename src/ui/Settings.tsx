@@ -33,7 +33,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
     const blob = new Blob([JSON.stringify(buildBackup(profile, golf, swings))], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `caddaie-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `hitwhat-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   };
@@ -56,7 +56,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
     <Sheet title="Settings" onClose={onClose} testid="settings">
       {!storageOk && (
         <p class="banner warn" role="status">
-          This browser isn’t letting CADDAIE save (private browsing?). Changes will reset when you close the app.
+          This browser isn’t letting HitWhat save (private browsing?). Changes will reset when you close the app.
         </p>
       )}
 
@@ -222,8 +222,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <ul class="plain-list">
           <li>Rounds, scores, shots and settings are stored in this browser on this phone. There’s no account and no server copy.</li>
           <li>Swing videos stay on this phone and are analyzed on it. They are never uploaded.</li>
-          <li>Location is used only on your phone, to measure distances and find course maps. To load a course map, CADDAIE sends your rough position to OpenStreetMap’s free map service; for live weather and terrain height, to Open-Meteo.</li>
-          <li>Add CADDAIE to your Home Screen (Share › Add to Home Screen). Safari can clear data for websites you haven’t opened in a while; Home Screen apps keep theirs.</li>
+          <li>Location is used only on your phone, to measure distances and find course maps. To load a course map, HitWhat sends your rough position to OpenStreetMap’s free map service; for live weather and terrain height, to Open-Meteo.</li>
+          <li>Add HitWhat to your Home Screen (Share › Add to Home Screen). Safari can clear data for websites you haven’t opened in a while; Home Screen apps keep theirs.</li>
         </ul>
         {usage && <p class="fine">{usage}.</p>}
         <div class="row">
@@ -277,6 +277,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
       <footer class="about">
         <Wordmark />
+        <p class="tagline">What do I hit here?</p>
         <p class="muted">Free, private, and built to work with no signal.</p>
       </footer>
     </Sheet>

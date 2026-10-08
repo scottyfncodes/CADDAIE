@@ -145,6 +145,7 @@ export async function findNearbyCourses(p: LatLon, opts: { fetchImpl?: typeof fe
   return r.ok ? { ok: true, courses: parseCourses(r.json, p) } : r;
 }
 
+// Original storage namespace, kept so maps cached before the HitWhat rename survive.
 const MAP_KEY = 'caddaie.maps';
 const MAP_TTL = 30 * 864e5;
 
