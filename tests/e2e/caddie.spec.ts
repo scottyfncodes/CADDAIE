@@ -171,7 +171,11 @@ test.describe('bag, settings and persistence', () => {
     await seed(page);
     await page.goto('./#caddie');
     await page.getByTestId('open-settings').click();
-    for (const box of await page.getByTestId('bag').getByRole('checkbox').all()) await box.uncheck();
+    // .all() doesn't wait, so make sure the bag has rendered before collecting checkboxes.
+    const boxes = page.getByTestId('bag').getByRole('checkbox');
+    await expect(boxes).toHaveCount(14);
+    for (const box of await boxes.all()) await box.uncheck();
+    for (const box of await boxes.all()) await expect(box).not.toBeChecked();
     await page.getByTestId('sheet-done').click();
     await distance(page).fill('150');
     await expect(page.getByTestId('recommendation')).toContainText('Add at least one club');
