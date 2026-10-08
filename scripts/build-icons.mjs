@@ -1,4 +1,4 @@
-// Renders the CADDAIE app icon SVG into the PNG sizes iOS/Android/PWA need.
+// Renders the HitWhat app icon SVG into the PNG sizes iOS/Android/PWA need.
 // Uses the Playwright Chromium already required for e2e tests — no image deps.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { chromium } from '@playwright/test';

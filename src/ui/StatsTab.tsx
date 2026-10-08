@@ -39,7 +39,7 @@ export function StatsTab() {
           <p class="muted">
             {active
               ? 'Finish your round and this page shows where you’re strong, where you lose strokes, and whether it’s getting better.'
-              : 'Play a round in CADDAIE (or add past scores) and this page shows where you’re strong, where you lose strokes, and whether it’s getting better.'}
+              : 'Play a round in HitWhat (or add past scores) and this page shows where you’re strong, where you lose strokes, and whether it’s getting better.'}
           </p>
           <button type="button" class="btn primary" onClick={() => go('round')}>
             {active ? 'Back to your round' : 'Start a round'}
@@ -85,7 +85,7 @@ export function StatsTab() {
         </section>
       ) : (
         <section class="card">
-          <p class="muted">Score a round hole by hole in CADDAIE to unlock putting, approach, driving and penalty insights. Score-only rounds count toward your average and handicap.</p>
+          <p class="muted">Score a round hole by hole in HitWhat to unlock putting, approach, driving and penalty insights. Score-only rounds count toward your average and handicap.</p>
         </section>
       )}
 
@@ -188,7 +188,7 @@ export function StatsTab() {
             .sort((a, b) => b.date - a.date)
             .slice(0, 5)
             .map((r) => {
-              const t = r.source === 'caddaie' ? roundTotals(r) : null;
+              const t = r.source === 'app' ? roundTotals(r) : null;
               return (
                 <li key={r.id}>
                   <strong>{roundScore(r) ?? t?.strokes ?? '—'}</strong> · {r.courseName} · {shortDate(r.date)}

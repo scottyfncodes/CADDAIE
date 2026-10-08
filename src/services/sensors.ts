@@ -19,7 +19,7 @@ export type GpsState =
 
 export const GPS_ERROR_TEXT = {
   unsupported: 'This browser can’t share location.',
-  denied: 'Location is off for CADDAIE. Turn it on in Settings › Privacy › Location Services › Safari Websites.',
+  denied: 'Location is off for HitWhat. Turn it on in Settings › Privacy › Location Services › Safari Websites.',
   unavailable: 'No GPS fix yet. Step into the open and give it a moment.',
 } as const;
 

@@ -81,7 +81,7 @@ describe('handicap report', () => {
     expect(explainEstimate(rep)).toMatch(/needs 3 scores/);
   });
 
-  it('builds an estimate from manual and CADDAIE rounds, with a trend', () => {
+  it('builds an estimate from manual and HitWhat rounds, with a trend', () => {
     const rounds = [manual(90), manual(88), played(14), manual(95)];
     const rep = handicapReport(rounds);
     // Differentials: 18, 16, 14, 23 → 4 scores: best (14) − 1.0
@@ -93,7 +93,7 @@ describe('handicap report', () => {
     expect(explainEstimate(rep)).toMatch(/best differential from your last 4 scores, minus 1.0/);
   });
 
-  it('ignores unfinished CADDAIE rounds and says so', () => {
+  it('ignores unfinished HitWhat rounds and says so', () => {
     const r = played(10);
     r.holes[17] = { ...hole(4), strokes: null };
     const rep = handicapReport([r]);

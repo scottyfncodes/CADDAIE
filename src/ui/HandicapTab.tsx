@@ -1,5 +1,5 @@
 /**
- * HANDICAP: a CADDAIE estimate built from your rounds, kept clearly apart from
+ * HANDICAP: a HitWhat estimate built from your rounds, kept clearly apart from
  * an official Handicap Index (which only an authorised association can issue).
  */
 import { useState } from 'preact/hooks';
@@ -41,7 +41,7 @@ export function HandicapTab() {
   return (
     <div class="stack">
       <section class="hcp-hero" data-testid="hcp-estimate">
-        <p class="eyebrow">CADDAIE estimate</p>
+        <p class="eyebrow">HitWhat estimate</p>
         {rep.estimate !== null ? (
           <>
             <p class="hcp-number" data-testid="hcp-number">
@@ -55,7 +55,7 @@ export function HandicapTab() {
           <>
             <p class="hcp-sub" data-testid="hcp-missing">
               {total === 0 && rep.excluded.length === 0
-                ? 'No handicap yet? Add 3 scores with the course rating and slope, and CADDAIE will estimate one.'
+                ? 'No handicap yet? Add 3 scores with the course rating and slope, and HitWhat will estimate one.'
                 : `Add ${rep.needed} more score${rep.needed === 1 ? '' : 's'} with course rating and slope to get an estimate.`}
             </p>
             <div class="progress-dots" aria-label={`${total} of 3 scores`}>
@@ -111,7 +111,7 @@ export function HandicapTab() {
         ) : (
           <p class={`official-value${profile.officialIndex === null ? ' none' : ''}`}>{profile.officialIndex !== null ? plusIndex(profile.officialIndex) : 'Not entered'}</p>
         )}
-        <p class="fine">Only your golf association can issue an official index. If you have one, enter it from your club or association app. CADDAIE uses it for strategy but never changes it.</p>
+        <p class="fine">Only your golf association can issue an official index. If you have one, enter it from your club or association app. HitWhat uses it for strategy but never changes it.</p>
       </section>
 
       <section class="card">
@@ -156,7 +156,7 @@ export function HandicapTab() {
               <div class="chips" role="radiogroup" aria-label="Index to use" style={{ '--cols': 2 }}>
                 {(['official', 'estimate'] as const).map((k) => (
                   <button key={k} type="button" role="radio" aria-checked={chUse === k} class={`chip${chUse === k ? ' on' : ''}`} onClick={() => setChUse(k)}>
-                    {k === 'official' ? 'Official index' : 'CADDAIE estimate'}
+                    {k === 'official' ? 'Official index' : 'HitWhat estimate'}
                   </button>
                 ))}
               </div>
@@ -227,14 +227,14 @@ export function HandicapTab() {
 
       <details class="card">
         <summary>
-          <span class="card-title">How CADDAIE calculates this</span>
+          <span class="card-title">How HitWhat calculates this</span>
         </summary>
         <ol class="explain">
           <li>
             Each round becomes a <strong>score differential</strong>: (113 ÷ slope) × (adjusted score − course rating). It measures how you played against how hard the course is.
           </li>
           <li>
-            For rounds scored hole by hole in CADDAIE, each hole is capped at <strong>net double bogey</strong> (par + 2 + any strokes you get there) before the differential is worked out. Before you have an estimate the cap is par + 5.
+            For rounds scored hole by hole in HitWhat, each hole is capped at <strong>net double bogey</strong> (par + 2 + any strokes you get there) before the differential is worked out. Before you have an estimate the cap is par + 5.
           </li>
           <li>
             Your estimate is the average of your <strong>best 8 of your last 20</strong> differentials. With fewer scores, fewer count (best 1 of 3, minus 2.0, and so on up).

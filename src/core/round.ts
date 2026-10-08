@@ -1,6 +1,6 @@
 /**
  * Rounds, holes and courses. Pure data + pure helpers; persistence lives in
- * `src/state`. A round is either played in CADDAIE (hole by hole) or entered
+ * `src/state`. A round is either played in HitWhat (hole by hole) or entered
  * after the fact as a total score (for handicap history).
  */
 
@@ -41,7 +41,7 @@ export interface Course {
   targets: Record<number, { lat: number; lon: number }>;
 }
 
-export type RoundSource = 'caddaie' | 'manual';
+export type RoundSource = 'app' | 'manual';
 
 export interface Round {
   id: string;

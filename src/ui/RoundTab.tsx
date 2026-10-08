@@ -48,7 +48,7 @@ function RoundHome({ onOpen }: { onOpen: (id: string) => void }) {
       <section class="hero-start">
         <p class="eyebrow">{done.length ? 'Ready for the next one?' : 'Ready to play?'}</p>
         <h1>{done.length ? 'Start a round' : 'Play a round with your caddie'}</h1>
-        <p class="lede">Score each hole in a couple of taps. CADDAIE gives feedback as you go and learns your game.</p>
+        <p class="lede">Score each hole in a couple of taps. HitWhat gives feedback as you go and learns your game.</p>
         <button type="button" class="btn primary wide" onClick={() => setStarting(true)} data-testid="start-round">
           <Icon name="flag" size={22} /> Start a round
         </button>
@@ -59,7 +59,7 @@ function RoundHome({ onOpen }: { onOpen: (id: string) => void }) {
 
       <section class="tiles">
         <button type="button" class="tile" onClick={() => go('handicap')} data-testid="tile-handicap">
-          <span class="stat-label">{profile.officialIndex !== null ? 'Official index' : 'CADDAIE estimate'}</span>
+          <span class="stat-label">{profile.officialIndex !== null ? 'Official index' : 'HitWhat estimate'}</span>
           <span class="stat-value">{profile.officialIndex ?? handicap.estimate ?? '—'}</span>
           <span class="stat-sub">{profile.officialIndex !== null ? 'Entered by you' : handicap.estimate !== null ? 'Handicap estimate' : `${handicap.needed} more score${handicap.needed === 1 ? '' : 's'} needed`}</span>
         </button>
@@ -76,7 +76,7 @@ function RoundHome({ onOpen }: { onOpen: (id: string) => void }) {
           <ul class="round-list" data-testid="round-list">
             {done.slice(0, 12).map((r) => {
               const score = roundScore(r);
-              const t = r.source === 'caddaie' ? roundTotals(r) : null;
+              const t = r.source === 'app' ? roundTotals(r) : null;
               const shown = score ?? t?.strokes ?? null;
               const par = r.source === 'manual' ? null : t;
               return (

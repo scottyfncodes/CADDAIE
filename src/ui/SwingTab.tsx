@@ -98,7 +98,7 @@ export function SwingTab() {
       <section class="hero-start">
         <p class="eyebrow">Swing check</p>
         <h1>Film a swing. Get one thing to work on.</h1>
-        <p class="lede">Prop your phone on your bag, pick the angle, and CADDAIE checks tempo, posture, head movement, turn and balance.</p>
+        <p class="lede">Prop your phone on your bag, pick the angle, and HitWhat checks tempo, posture, head movement, turn and balance.</p>
         <div class="angle-pick">
           {(['dtl', 'face-on'] as CameraAngle[]).map((a) => (
             <button key={a} type="button" class="angle-card" onClick={() => setView({ kind: 'capture', angle: a, video: null })} data-testid={`angle-${a}`}>
@@ -139,11 +139,11 @@ export function SwingTab() {
           </div>
         )}
         <p class="fine">
-          <Icon name="info" size={14} /> Videos and analysis stay on this phone. Nothing is uploaded. CADDAIE coaches body movement it can see on camera; it doesn’t measure club speed, path or face angle.
+          <Icon name="info" size={14} /> Videos and analysis stay on this phone. Nothing is uploaded. HitWhat coaches body movement it can see on camera; it doesn’t measure club speed, path or face angle.
         </p>
       </section>
 
-      {storageErr && <p class="banner warn">This browser isn’t letting CADDAIE save swings (private browsing?). You can still analyze them.</p>}
+      {storageErr && <p class="banner warn">This browser isn’t letting HitWhat save swings (private browsing?). You can still analyze them.</p>}
 
       {tendencies.length > 0 && (
         <section class="card" data-testid="tendencies">
@@ -185,7 +185,7 @@ export function SwingTab() {
       ) : (
         swings && (
           <Empty icon="swing" title="No saved swings yet">
-            <p class="muted">Save swings to compare them and let CADDAIE spot what keeps coming back.</p>
+            <p class="muted">Save swings to compare them and let HitWhat spot what keeps coming back.</p>
           </Empty>
         )
       )}

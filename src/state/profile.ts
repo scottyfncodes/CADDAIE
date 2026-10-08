@@ -8,6 +8,8 @@ import type { Club, ClubType, DistanceTendency, Handedness, Lie, ShotInput, Stan
 import { IMPERIAL, type Units } from '../core/units';
 
 export const PROFILE_VERSION = 1;
+// Storage keys keep the app's original 'caddaie.' namespace so data saved
+// before the HitWhat rename is still found. Never shown to the golfer.
 export const STORAGE_KEY = 'caddaie.profile';
 export const SITUATION_KEY = 'caddaie.situation';
 
@@ -161,7 +163,7 @@ export interface KeyValueStore {
 export function safeStorage(): KeyValueStore | null {
   try {
     const s = globalThis.localStorage;
-    const probe = '__caddaie_probe__';
+    const probe = '__hitwhat_probe__';
     s.setItem(probe, '1');
     s.removeItem(probe);
     return s;

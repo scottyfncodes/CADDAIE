@@ -1,6 +1,6 @@
 /**
  * Caddie strategy: where to aim, the safe miss and how to play a hole.
- * Deterministic rules built only on what CADDAIE actually knows: the pin
+ * Deterministic rules built only on what HitWhat actually knows: the pin
  * position and trouble the golfer marked, their bag, their handicap estimate
  * and their recorded tendencies.
  */

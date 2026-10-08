@@ -4,7 +4,7 @@
       <stop offset="0" stop-color="#1c3a2b"/>
       <stop offset="1" stop-color="#07110c"/>
     </radialGradient>
-    <linearGradient id="ai" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="flag" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#c8f53d"/>
       <stop offset="1" stop-color="#3fe3a4"/>
     </linearGradient>
@@ -16,8 +16,9 @@
   <!-- pin -->
   <rect x="249" y="118" width="14" height="274" rx="7" fill="#f2f7f3"/>
   <!-- flag -->
-  <path d="M263 120 L420 176 L263 232 Z" fill="url(#ai)"/>
-  <text x="276" y="196" font-family="Helvetica Neue, Arial, sans-serif" font-weight="900" font-size="56" letter-spacing="-1" fill="#07110c">AI</text>
+  <path d="M263 120 L420 176 L263 232 Z" fill="url(#flag)"/>
+  <!-- the golfer's question: what do I hit here? -->
+  <text x="310" y="203" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-weight="900" font-size="78" fill="#07110c">?</text>
   <!-- ball -->
   <circle cx="178" cy="382" r="20" fill="#f2f7f3"/>
 </svg>

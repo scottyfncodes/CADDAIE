@@ -14,7 +14,7 @@ const mediapipeDir = () => join(dirname(createRequire(import.meta.url).resolve('
  */
 function mediapipeRuntime(): Plugin {
   return {
-    name: 'caddaie-mediapipe',
+    name: 'hitwhat-mediapipe',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         const m = req.url?.match(/\/mediapipe\/([\w.]+)$/);
@@ -35,7 +35,7 @@ function mediapipeRuntime(): Plugin {
  */
 function serviceWorker(): Plugin {
   return {
-    name: 'caddaie-service-worker',
+    name: 'hitwhat-service-worker',
     apply: 'build',
     generateBundle(_opts, bundle) {
       // The swing analyzer's runtime (~12 MB) is cached on first use, not at install.
@@ -54,7 +54,8 @@ function serviceWorker(): Plugin {
 }
 
 export default defineConfig({
-  // GitHub Pages serves the app from /CADDAIE/. Relative base keeps it portable.
+  // GitHub Pages serves the app from the repo path (/CADDAIE/); hitwhat.com would serve it
+  // from the root. A relative base works for both.
   base: './',
   plugins: [preact(), mediapipeRuntime(), serviceWorker()],
   build: {

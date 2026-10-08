@@ -17,10 +17,10 @@ async function seed(page: Page, patch: Record<string, unknown> = {}, extra: Reco
 const distance = (page: Page) => page.getByRole('textbox', { name: /Distance to target/ });
 
 test.describe('first load', () => {
-  test('explains CADDAIE in one screen, then remembers', async ({ page }) => {
+  test('explains HitWhat in one screen, then remembers', async ({ page }) => {
     await page.goto('./');
-    await expect(page).toHaveTitle(/CADDAIE/);
-    await expect(page.getByTestId('welcome')).toContainText('Your caddie, in your pocket.');
+    await expect(page).toHaveTitle(/HitWhat/);
+    await expect(page.getByTestId('welcome')).toContainText('What do I hit here?');
     for (const t of ['Keep score', 'Get the club', 'Measure the distance', 'Check your swing', 'Track your handicap']) {
       await expect(page.getByTestId('welcome')).toContainText(t);
     }
@@ -44,7 +44,9 @@ test.describe('first load', () => {
     await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveCount(1);
     await expect(page.locator('meta[name="apple-mobile-web-app-capable"]')).toHaveAttribute('content', 'yes');
     const manifest = await (await request.get('manifest.webmanifest')).json();
-    expect(manifest.short_name).toBe('CADDAIE');
+    expect(manifest.short_name).toBe('HitWhat');
+    expect(manifest.name).toContain('HitWhat');
+    await expect(page.locator('meta[name="apple-mobile-web-app-title"]')).toHaveAttribute('content', 'HitWhat');
     expect(manifest.display).toBe('standalone');
     for (const icon of manifest.icons) expect((await request.get(icon.src)).ok()).toBe(true);
     // The swing model ships with the app (no third-party CDN at runtime).
@@ -209,7 +211,8 @@ test.describe('bag, settings and persistence', () => {
     const [download] = await Promise.all([page.waitForEvent('download'), page.getByTestId('export-backup').click()]);
     const text = await (await download.createReadStream()).toArray();
     const json = JSON.parse(Buffer.concat(text).toString());
-    expect(json.format).toBe('caddaie-backup');
+    expect(json.format).toBe('hitwhat-backup');
+    expect(download.suggestedFilename()).toMatch(/^hitwhat-backup-/);
     expect(json.profile.clubs.length).toBeGreaterThan(5);
   });
 });

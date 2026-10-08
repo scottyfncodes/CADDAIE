@@ -12,13 +12,13 @@ export function hole(strokes: number, over: Partial<HoleScore> = {}): HoleScore 
   return { ...emptyHole(), strokes, putts: 2, ...over };
 }
 
-/** An 18-hole CADDAIE round where each hole scores `par + over[i]`. */
+/** An 18-hole HitWhat round where each hole scores `par + over[i]`. */
 export function played(overPar: number[] | number, extra: Partial<Round> = {}, holeOver: (i: number) => Partial<HoleScore> = () => ({})): Round {
   const t = extra.tee ?? tee();
   const offs = Array.isArray(overPar) ? overPar : Array(18).fill(0).map((_, i) => (i < Math.abs(overPar) ? Math.sign(overPar) : 0));
   return {
     id: `r${++n}`,
-    source: 'caddaie',
+    source: 'app',
     status: 'complete',
     date: Date.UTC(2026, 0, 1) + n * 864e5,
     courseId: 'c1',

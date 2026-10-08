@@ -28,6 +28,13 @@ describe('golf data persistence', () => {
     expect(r.tee.par).toHaveLength(18);
   });
 
+  it('rounds saved before the HitWhat rename still load as played-in-app rounds', () => {
+    const r = sanitizeRound({ ...played(1), source: 'caddaie', status: 'active' })!;
+    expect(r.source).toBe('app');
+    expect(r.status).toBe('active');
+    expect(r.holes[0].strokes).not.toBeNull();
+  });
+
   it('only one round can be active', () => {
     const a = { ...played(0), status: 'active', date: 1 };
     const b = { ...played(0), status: 'active', date: 2 };
@@ -54,6 +61,13 @@ describe('backup', () => {
     if (r.ok) expect(r.golf.rounds).toHaveLength(1);
     expect(parseBackup('{"hello":1}').ok).toBe(false);
     expect(parseBackup('not json').ok).toBe(false);
+  });
+
+  it('restores backups made before the HitWhat rename', () => {
+    const old = { ...buildBackup(defaultProfile(), { rounds: [played(1)], courses: [], shots: [] }, [], 5), format: 'caddaie-backup' };
+    const r = parseBackup(JSON.stringify(old));
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.golf.rounds[0].source).toBe('app');
   });
 });
 

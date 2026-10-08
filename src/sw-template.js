@@ -1,9 +1,13 @@
-/* CADDAIE service worker — generated at build time from src/sw-template.js. */
+/* HitWhat service worker — generated at build time from src/sw-template.js. */
 const VERSION = '__VERSION__';
-const CACHE = `caddaie-${VERSION}`;
+const CACHE = `hitwhat-${VERSION}`;
 const PRECACHE = __PRECACHE__;
 // Large, versioned-by-path files (swing model + runtime) survive app updates.
-const RUNTIME = 'caddaie-runtime-v1';
+const RUNTIME = 'hitwhat-runtime-v1';
+// Shell caches from before the rename are cleared on activate; the old runtime
+// cache is kept so the swing model already on the phone still works offline.
+const LEGACY_RUNTIME = 'caddaie-runtime-v1';
+const OWN = (k) => (k.startsWith('hitwhat-') || k.startsWith('caddaie-')) && k !== LEGACY_RUNTIME;
 const isRuntime = (url) => /\/(mediapipe|models)\//.test(url.pathname);
 
 self.addEventListener('install', (event) => {
@@ -19,7 +23,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('caddaie-') && k !== CACHE && k !== RUNTIME).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => OWN(k) && k !== CACHE && k !== RUNTIME).map((k) => caches.delete(k))))
       .then(() => self.clients.claim()),
   );
 });

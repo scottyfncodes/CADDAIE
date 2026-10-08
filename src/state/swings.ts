@@ -17,6 +17,7 @@ export interface SavedSwing {
   videoBytes: number;
 }
 
+// Original database name, kept so swings saved before the HitWhat rename survive.
 const DB = 'caddaie';
 const VERSION = 1;
 

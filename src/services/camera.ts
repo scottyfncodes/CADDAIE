@@ -4,9 +4,9 @@ export type CameraFailure = 'unsupported' | 'denied' | 'busy' | 'insecure';
 
 export const CAMERA_FAILURE_TEXT: Record<CameraFailure, string> = {
   unsupported: 'This browser can’t use the camera.',
-  denied: 'Camera access is off for CADDAIE. Allow it in Settings › Safari › Camera, then try again.',
+  denied: 'Camera access is off for HitWhat. Allow it in Settings › Safari › Camera, then try again.',
   busy: 'The camera is in use by another app.',
-  insecure: 'The camera only works when CADDAIE is opened over https.',
+  insecure: 'The camera only works when HitWhat is opened over https.',
 };
 
 export async function openCamera(opts: { facing?: 'environment' | 'user'; fps?: number; width?: number } = {}): Promise<{ ok: true; stream: MediaStream } | { ok: false; reason: CameraFailure }> {

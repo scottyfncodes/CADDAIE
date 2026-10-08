@@ -1,4 +1,4 @@
-/* CADDAIE — calm, golf-specific, readable in the sun. One accent, big numbers, thumb-first. */
+/* HitWhat — "What do I hit here?" Calm, golf-specific, readable in the sun. One accent, big numbers, thumb-first. */
 
 :root {
   --bg: #0b100d;
@@ -191,7 +191,7 @@ p {
   font-size: 34px;
 }
 
-.wordmark-ai {
+.wordmark-accent {
   color: var(--accent);
 }
 
@@ -3162,6 +3162,13 @@ select.text-input,
   gap: 8px;
   padding: 10px 0 4px;
   text-align: center;
+}
+
+.about .tagline {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  color: var(--accent);
 }
 
 .chips.fairway .chip {

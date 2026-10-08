@@ -73,7 +73,7 @@ export function StartRound({ onClose, onStarted }: { onClose: () => void; onStar
     const count: 9 | 18 = tee.par.length === 9 ? 9 : holes;
     const round: Round = {
       id: newId(),
-      source: 'caddaie',
+      source: 'app',
       status: 'active',
       date: now,
       courseId: c.id,

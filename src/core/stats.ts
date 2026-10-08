@@ -53,7 +53,7 @@ export function playerStats(rounds: Round[]): PlayerStats {
       return t.holesPlayed ? { score: t.strokes, par: t.par, holes: t.holesPlayed } : null;
     })
     .filter((x): x is { score: number; par: number; holes: number } => x !== null);
-  const detailed = done.filter((r) => r.source === 'caddaie').map((r) => ({ r, t: roundTotals(r) })).filter((x) => x.t.holesPlayed > 0);
+  const detailed = done.filter((r) => r.source === 'app').map((r) => ({ r, t: roundTotals(r) })).filter((x) => x.t.holesPlayed > 0);
 
   const sum = (f: (t: RoundTotals) => number) => detailed.reduce((s, x) => s + f(x.t), 0);
   const holes = sum((t) => t.holesPlayed);
@@ -179,7 +179,7 @@ const verdictOf = (gap: number): Verdict => (gap <= -0.08 ? 'good' : gap >= 0.12
 
 /** Detailed rounds, newest first. */
 const detailedNewestFirst = (rounds: Round[]) =>
-  rounds.filter((r) => r.status === 'complete' && r.source === 'caddaie').sort((a, b) => b.date - a.date);
+  rounds.filter((r) => r.status === 'complete' && r.source === 'app').sort((a, b) => b.date - a.date);
 
 export function insights(rounds: Round[]): Insights {
   const s = playerStats(rounds);
@@ -285,7 +285,7 @@ export function summarizeRound(r: Round, history: Round[]): RoundSummary {
   else if (t.doublesOrWorse >= 4) takeaway = `${t.doublesOrWorse} holes at double bogey or worse. Turning those into bogeys is the fastest way to lower scores.`;
   else if (vsAverage !== null && vsAverage <= -2) takeaway = `${Math.round(-vsAverage)} better than your average. Note what worked today.`;
   else if (strongest) takeaway = `${strongest} carried the round. Build on it.`;
-  else takeaway = `${toParText(t.toPar)} for the round. Every round adds to what CADDAIE knows about your game.`;
+  else takeaway = `${toParText(t.toPar)} for the round. Every round adds to what HitWhat knows about your game.`;
 
   return {
     score: t.strokes,

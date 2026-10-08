@@ -198,7 +198,7 @@ const shC = (f: Frame) => mid(f.pt(LM.lShoulder), f.pt(LM.rShoulder));
 
 export function analyzeSwing(frames: PoseFrame[], angle: CameraAngle, aspect = 9 / 16): SwingResult {
   const F = prepare(frames, aspect);
-  if (F.length < 12) return { ok: false, reason: 'CADDAIE couldn’t see a golfer clearly in enough of the video. Make sure your whole body is in frame and well lit.' };
+  if (F.length < 12) return { ok: false, reason: 'HitWhat couldn’t see a golfer clearly in enough of the video. Make sure your whole body is in frame and well lit.' };
   const dts = F.slice(1).map((f, i) => f.t - F[i].t).filter((d) => d > 0);
   const dt = median(dts);
   const fps = 1 / dt;
@@ -213,7 +213,7 @@ export function analyzeSwing(frames: PoseFrame[], angle: CameraAngle, aspect = 9
   const minY = Math.min(...ys);
   const maxY = Math.max(...ys);
   const range = maxY - minY;
-  if (range < torso * 0.8) return { ok: false, reason: 'CADDAIE couldn’t find a full swing in this clip. Record from address to finish with the whole swing in view.' };
+  if (range < torso * 0.8) return { ok: false, reason: 'HitWhat couldn’t find a full swing in this clip. Record from address to finish with the whole swing in view.' };
 
   // Impact: fastest hands while the hands are low.
   let impact = -1;
@@ -228,7 +228,7 @@ export function analyzeSwing(frames: PoseFrame[], angle: CameraAngle, aspect = 9
     if (top === -1 || H[i].y < H[top].y) top = i;
   }
   if (impact <= 0 || top < 0 || H[top].y > minY + range * 0.45) {
-    return { ok: false, reason: 'CADDAIE couldn’t find the top of the backswing. Start recording before you take the club back.' };
+    return { ok: false, reason: 'HitWhat couldn’t find the top of the backswing. Start recording before you take the club back.' };
   }
   // Address: where the hands settle before the backswing; takeaway is the last frame still there.
   const before = F.map((_, i) => i).filter((i) => i < top && F[top].t - F[i].t <= 3 && H[i].y >= minY + range * 0.65);
